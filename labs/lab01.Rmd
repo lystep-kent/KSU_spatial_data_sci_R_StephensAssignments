@@ -6,7 +6,7 @@ output:
    pdf_document: 
       template: my_template.tex
       keep_tex: true
-my_subtitle: "GEOG 491/891"
+my_subtitle: "Env Analysis in R"
 fancy: true
 geometry: margin=1in
 latex_engine: pdflatex

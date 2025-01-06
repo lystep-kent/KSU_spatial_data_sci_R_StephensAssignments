@@ -43,13 +43,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -57,7 +57,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -66,7 +66,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -120,7 +120,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead[LO, LE]{Lab 01}
-\fancyhead[RO, RE]{GEOG 491/891}
+\fancyhead[RO, RE]{Env Analysis in R}
 \makeatletter
 \renewcommand{\maketitle}{\bgroup\vspace*{-1cm}\setlength{\parindent}{0pt}
 \begin{flushleft}
@@ -135,22 +135,19 @@
 \begin{document}
 \maketitle
 
-\hypertarget{lab-01-an-introduction-to-attribute-and-spatial-analysis-in-r}{%
 \section{Lab 01: An introduction to attribute and spatial analysis in
-R}\label{lab-01-an-introduction-to-attribute-and-spatial-analysis-in-r}}
+R}\label{lab-01-an-introduction-to-attribute-and-spatial-analysis-in-r}
 
-\hypertarget{read-the-instructions-completely-before-starting-the-lab}{%
 \subsubsection{Read the instructions COMPLETELY before starting the
-lab}\label{read-the-instructions-completely-before-starting-the-lab}}
+lab}\label{read-the-instructions-completely-before-starting-the-lab}
 
 This lab builds on many of the discussions and exercises from class.
 This lab also builds on Chapters 1-3 from your textbook, as well at R
 for Data Science by Hadley Wickham and Garrett Grolemund
 (\url{https://r4ds.had.co.nz})
 
-\hypertarget{formatting-your-submission}{%
 \subsubsection{Formatting your
-submission}\label{formatting-your-submission}}
+submission}\label{formatting-your-submission}
 
 This lab must be placed into a public repository on GitHub
 (www.github.com). Before the due date, submit \textbf{on Canvas} a link
@@ -163,8 +160,7 @@ repository at the time you submit your link to Canvas. They can be in a
 separte text file, or if you decide to use an RMarkdown document, you
 can answer them directly in the doc.
 
-\hypertarget{exploratory-data-analysis}{%
-\subsection{Exploratory data analysis}\label{exploratory-data-analysis}}
+\subsection{Exploratory data analysis}\label{exploratory-data-analysis}
 
 This lab uses two files from the /data/CBW directory of this course's
 main repository: 1. County\_Boundaries.shp: A polygon file containing
@@ -173,9 +169,8 @@ Non-Tidal\_Water\_Quality\_Monitoring\_Stations\_in\_the\_Chesapeake\_Bay.shp:
 point locations of non-tidal monitoring stations in the Chesapeake Bay
 Watershed
 
-\hypertarget{step-1-load-your-packages-and-data}{%
 \subsubsection{Step 1, load your packages and
-data}\label{step-1-load-your-packages-and-data}}
+data}\label{step-1-load-your-packages-and-data}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -184,20 +179,16 @@ data}\label{step-1-load-your-packages-and-data}}
 \end{Shaded}
 
 \begin{verbatim}
-## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-\end{verbatim}
-
-\begin{verbatim}
-## v ggplot2 3.3.5     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.7
-## v tidyr   1.1.3     v stringr 1.4.0
-## v readr   1.4.0     v forcats 0.5.1
-\end{verbatim}
-
-\begin{verbatim}
+## -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
+## v dplyr     1.1.4     v readr     2.1.5
+## v forcats   1.0.0     v stringr   1.5.1
+## v ggplot2   3.5.1     v tibble    3.2.1
+## v lubridate 1.9.3     v tidyr     1.3.1
+## v purrr     1.0.2     
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()
+## i Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 \end{verbatim}
 
 \begin{Shaded}
@@ -208,7 +199,7 @@ data}\label{step-1-load-your-packages-and-data}}
 \end{Shaded}
 
 \begin{verbatim}
-## Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1
+## Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -356,14 +347,14 @@ that we specify:
 ## Bounding box:  xmin: -79.38264 ymin: 37.69574 xmax: -76.95493 ymax: 40.72605
 ## Geodetic CRS:  WGS 84
 ## # A tibble: 6 x 3
-##   GEOID10   ALAND10                                                     geometry
-##   <chr>       <dbl>                                           <MULTIPOLYGON [°]>
-## 1 51540      2.65e7 (((-78.47082 38.04893, -78.47086 38.04893, -78.47096 38.048~
-## 2 51510      3.89e7 (((-77.06129 38.79457, -77.0612 38.79454, -77.06092 38.7944~
-## 3 51530      1.74e7 (((-79.36668 37.7267, -79.36655 37.72627, -79.36653 37.7261~
-## 4 51600      1.62e7 (((-77.31476 38.86701, -77.31534 38.86702, -77.31537 38.867~
-## 5 42021      1.78e9 (((-79.03546 40.31539, -79.03611 40.31477, -79.0363 40.3145~
-## 6 42001      1.34e9 (((-77.46594 39.85958, -77.46589 39.85924, -77.46586 39.859~
+##   GEOID10    ALAND10                                                    geometry
+##   <chr>        <dbl>                                          <MULTIPOLYGON [°]>
+## 1 51540     26517362 (((-78.47082 38.04893, -78.47086 38.04893, -78.47096 38.04~
+## 2 51510     38919733 (((-77.06129 38.79457, -77.0612 38.79454, -77.06092 38.794~
+## 3 51530     17362236 (((-79.36668 37.7267, -79.36655 37.72627, -79.36653 37.726~
+## 4 51600     16159465 (((-77.31476 38.86701, -77.31534 38.86702, -77.31537 38.86~
+## 5 42021   1782819861 (((-79.03546 40.31539, -79.03611 40.31477, -79.0363 40.314~
+## 6 42001   1343342705 (((-77.46594 39.85958, -77.46589 39.85924, -77.46586 39.85~
 \end{verbatim}
 
 \begin{Shaded}
@@ -398,7 +389,7 @@ attribute) using a \texttt{-} flag. For example:
 ## 4        4 51        600        01789070   51600   Fairfax city 25     C7       
 ## 5        5 42        021        01213662   42021   Cambria Cou~ 06     H1       
 ## 6        6 42        001        01213656   42001   Adams County 06     H1       
-## # ... with 12 more variables: MTFCC10 <chr>, CSAFP10 <chr>, CBSAFP10 <chr>,
+## # i 12 more variables: MTFCC10 <chr>, CSAFP10 <chr>, CBSAFP10 <chr>,
 ## #   METDIVFP10 <chr>, FUNCSTAT10 <chr>, ALAND10 <dbl>, AWATER10 <dbl>,
 ## #   INTPTLAT10 <chr>, INTPTLON10 <chr>, Shape_Leng <dbl>, Shape_Area <dbl>,
 ## #   geometry <MULTIPOLYGON [°]>
@@ -419,14 +410,14 @@ We can also specify ranges that we want to keep (or not):
 ## Bounding box:  xmin: -79.38264 ymin: 37.69574 xmax: -76.95493 ymax: 40.72605
 ## Geodetic CRS:  WGS 84
 ## # A tibble: 6 x 6
-##   GEOID10 NAME10   NAMELSAD10  LSAD10 CLASSFP10                         geometry
-##   <chr>   <chr>    <chr>       <chr>  <chr>                   <MULTIPOLYGON [°]>
-## 1 51540   Charlot~ Charlottes~ 25     C7        (((-78.47082 38.04893, -78.4708~
-## 2 51510   Alexand~ Alexandria~ 25     C7        (((-77.06129 38.79457, -77.0612~
-## 3 51530   Buena V~ Buena Vist~ 25     C7        (((-79.36668 37.7267, -79.36655~
-## 4 51600   Fairfax  Fairfax ci~ 25     C7        (((-77.31476 38.86701, -77.3153~
-## 5 42021   Cambria  Cambria Co~ 06     H1        (((-79.03546 40.31539, -79.0361~
-## 6 42001   Adams    Adams Coun~ 06     H1        (((-77.46594 39.85958, -77.4658~
+##   GEOID10 NAME10          NAMELSAD10  LSAD10 CLASSFP10                  geometry
+##   <chr>   <chr>           <chr>       <chr>  <chr>            <MULTIPOLYGON [°]>
+## 1 51540   Charlottesville Charlottes~ 25     C7        (((-78.47082 38.04893, -~
+## 2 51510   Alexandria      Alexandria~ 25     C7        (((-77.06129 38.79457, -~
+## 3 51530   Buena Vista     Buena Vist~ 25     C7        (((-79.36668 37.7267, -7~
+## 4 51600   Fairfax         Fairfax ci~ 25     C7        (((-77.31476 38.86701, -~
+## 5 42021   Cambria         Cambria Co~ 06     H1        (((-79.03546 40.31539, -~
+## 6 42001   Adams           Adams Coun~ 06     H1        (((-77.46594 39.85958, -~
 \end{verbatim}
 
 \begin{Shaded}
@@ -450,7 +441,7 @@ We can also specify ranges that we want to keep (or not):
 ## 4        4 51        600        01789070   G4020   548     47900    47894     
 ## 5        5 42        021        01213662   G4020   <NA>    27780    <NA>      
 ## 6        6 42        001        01213656   G4020   564     23900    <NA>      
-## # ... with 8 more variables: FUNCSTAT10 <chr>, ALAND10 <dbl>, AWATER10 <dbl>,
+## # i 8 more variables: FUNCSTAT10 <chr>, ALAND10 <dbl>, AWATER10 <dbl>,
 ## #   INTPTLAT10 <chr>, INTPTLON10 <chr>, Shape_Leng <dbl>, Shape_Area <dbl>,
 ## #   geometry <MULTIPOLYGON [°]>
 \end{verbatim}
@@ -480,11 +471,10 @@ We can also specify ranges that we want to keep (or not):
 ##  8 035        01214721   H1        558     30820    (((-78.05375 41.27349, -78.~
 ##  9 093        01213681   H1        <NA>    14100    (((-76.55799 40.93887, -76.~
 ## 10 117        01209189   H1        <NA>    <NA>     (((-77.21985 41.99978, -77.~
-## # ... with 197 more rows
+## # i 197 more rows
 \end{verbatim}
 
-\hypertarget{grouping-data}{%
-\subsubsection{Grouping data}\label{grouping-data}}
+\subsubsection{Grouping data}\label{grouping-data}
 
 We can also ``group'' our data according to categorical data in our
 data.frames. This is useful if you want to create a function that works
@@ -505,23 +495,23 @@ calculates the land area of all counties in each state.
 ## Geodetic CRS:  WGS 84
 ## # A tibble: 207 x 22
 ## # Groups:   STATEFP10 [7]
-##    OBJECTID STATEFP10 COUNTYFP10 COUNTYNS10 GEOID10 NAME10   NAMELSAD10   LSAD10
-##  *    <int> <chr>     <chr>      <chr>      <chr>   <chr>    <chr>        <chr> 
-##  1        1 51        540        01789068   51540   Charlot~ Charlottesv~ 25    
-##  2        2 51        510        01498415   51510   Alexand~ Alexandria ~ 25    
-##  3        3 51        530        01498417   51530   Buena V~ Buena Vista~ 25    
-##  4        4 51        600        01789070   51600   Fairfax  Fairfax city 25    
-##  5        5 42        021        01213662   42021   Cambria  Cambria Cou~ 06    
-##  6        6 42        001        01213656   42001   Adams    Adams County 06    
-##  7        7 42        061        01213672   42061   Hunting~ Huntingdon ~ 06    
-##  8        8 42        035        01214721   42035   Clinton  Clinton Cou~ 06    
-##  9        9 42        093        01213681   42093   Montour  Montour Cou~ 06    
-## 10       10 42        117        01209189   42117   Tioga    Tioga County 06    
-## # ... with 197 more rows, and 14 more variables: CLASSFP10 <chr>,
-## #   MTFCC10 <chr>, CSAFP10 <chr>, CBSAFP10 <chr>, METDIVFP10 <chr>,
-## #   FUNCSTAT10 <chr>, ALAND10 <dbl>, AWATER10 <dbl>, INTPTLAT10 <chr>,
-## #   INTPTLON10 <chr>, Shape_Leng <dbl>, Shape_Area <dbl>,
-## #   geometry <MULTIPOLYGON [°]>, stateLandArea <dbl>
+##    OBJECTID STATEFP10 COUNTYFP10 COUNTYNS10 GEOID10 NAME10     NAMELSAD10 LSAD10
+##  *    <int> <chr>     <chr>      <chr>      <chr>   <chr>      <chr>      <chr> 
+##  1        1 51        540        01789068   51540   Charlotte~ Charlotte~ 25    
+##  2        2 51        510        01498415   51510   Alexandria Alexandri~ 25    
+##  3        3 51        530        01498417   51530   Buena Vis~ Buena Vis~ 25    
+##  4        4 51        600        01789070   51600   Fairfax    Fairfax c~ 25    
+##  5        5 42        021        01213662   42021   Cambria    Cambria C~ 06    
+##  6        6 42        001        01213656   42001   Adams      Adams Cou~ 06    
+##  7        7 42        061        01213672   42061   Huntingdon Huntingdo~ 06    
+##  8        8 42        035        01214721   42035   Clinton    Clinton C~ 06    
+##  9        9 42        093        01213681   42093   Montour    Montour C~ 06    
+## 10       10 42        117        01209189   42117   Tioga      Tioga Cou~ 06    
+## # i 197 more rows
+## # i 14 more variables: CLASSFP10 <chr>, MTFCC10 <chr>, CSAFP10 <chr>,
+## #   CBSAFP10 <chr>, METDIVFP10 <chr>, FUNCSTAT10 <chr>, ALAND10 <dbl>,
+## #   AWATER10 <dbl>, INTPTLAT10 <chr>, INTPTLON10 <chr>, Shape_Leng <dbl>,
+## #   Shape_Area <dbl>, geometry <MULTIPOLYGON [°]>, stateLandArea <dbl>
 \end{verbatim}
 
 The above function is useful if you want to make calculations ``in
@@ -559,8 +549,7 @@ computation.
 \ldots and we're left with a sum of all the land area in each state (by
 FIPS code)
 
-\hypertarget{a-diversion-into-plots}{%
-\subsubsection{A diversion into plots}\label{a-diversion-into-plots}}
+\subsubsection{A diversion into plots}\label{a-diversion-into-plots}
 
 We can also use grouping functions in our visualization. For example:
 
@@ -589,8 +578,7 @@ We can also use grouping functions in our visualization. For example:
 
 \includegraphics{lab01_files/figure-latex/plots2-1.pdf}
 
-\hypertarget{spatial-operations}{%
-\subsubsection{Spatial operations}\label{spatial-operations}}
+\subsubsection{Spatial operations}\label{spatial-operations}
 
 Since we have spatial data, we can peform some basic spatial operations
 with it. First, let's take a look at the coordinate reference system
@@ -681,8 +669,8 @@ monitoring stations within our Delaware subset
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: attribute variables are assumed to be spatially constant throughout all
-## geometries
+## Warning: attribute variables are assumed to be spatially constant throughout
+## all geometries
 \end{verbatim}
 
 Plotting this small number of points will be ok, so let's look at the
@@ -759,14 +747,13 @@ Delaware:
 
 \begin{verbatim}
 ## Units: [m^2]
-## [1] 2065913885 3096294967 1278231146
+## [1] 2065913885 3096294967 1278231147
 \end{verbatim}
 
 Note that \texttt{sf} gives you the units of the calculation, but also
 that the data are in the form of a vector
 
-\hypertarget{your-tasks}{%
-\subsection{Your tasks}\label{your-tasks}}
+\subsection{Your tasks}\label{your-tasks}
 
 This lab requires you to put together many of the tasks demonstrated
 above, in class, help documentation (don't forget the \texttt{?}
@@ -782,9 +769,8 @@ Complete each task COMPLETELY USING R CODE. YOU MUST SHOW YOUR WORK FOR
 EACH ANSWER. Label your variables sensibly and use comments such that I
 can find your answers and your work.
 
-\hypertarget{task-1-basic-data-manipulation}{%
 \subsubsection{Task 1: Basic data
-manipulation}\label{task-1-basic-data-manipulation}}
+manipulation}\label{task-1-basic-data-manipulation}
 
 1.1 For each county, calculate its land area as percentage of the total
 area (land + water) for that state.
@@ -796,9 +782,8 @@ its land as water (water area / total area)
 
 1.4 Which station has the shortest name (STATION\_NA) in the study area?
 
-\hypertarget{task-2-plotting-attribute-data}{%
 \subsubsection{Task 2: Plotting attribute
-data}\label{task-2-plotting-attribute-data}}
+data}\label{task-2-plotting-attribute-data}
 
 \ldots for each plot, label your axes properly and give your plot a
 title
@@ -813,8 +798,7 @@ stations
 monitoring stations. This time, shade/color each portion of the
 histogram's bar(s) using the state variable
 
-\hypertarget{task-3-write-a-function}{%
-\subsubsection{Task 3: Write a function}\label{task-3-write-a-function}}
+\subsubsection{Task 3: Write a function}\label{task-3-write-a-function}
 
 3.1 Write a function that does the following:
 
@@ -832,9 +816,8 @@ Test it with the following vectors
 
 \texttt{c(1,\ 0,\ -1),\ c(10,\ 100,\ 1000),\ c(.1,\ .001,\ 1e8),\ c("a",\ "b",\ "c")}
 
-\hypertarget{task-4-slightly-more-complex-spatial-analysis.}{%
 \subsubsection{Task 4: (slightly) more complex spatial
-analysis.}\label{task-4-slightly-more-complex-spatial-analysis.}}
+analysis.}\label{task-4-slightly-more-complex-spatial-analysis.}
 
 \ldots Note, you may need to find supplementary data to help you with
 these tasks
@@ -847,8 +830,7 @@ this study area)
 4.3 Calculate which state has monitoring stations with the greatest
 average drainage area (Drainage\_A)
 
-\hypertarget{questions}{%
-\subsection{Questions}\label{questions}}
+\subsection{Questions}\label{questions}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
