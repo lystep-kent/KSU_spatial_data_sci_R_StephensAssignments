@@ -143,7 +143,7 @@ glimpse<span class="hljs-punctuation">(</span>d.stations<span class="hljs-punctu
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" lang="en-US" data-marpit-pagination="16" style="--paginate:true;" data-marpit-pagination-total="22" data-size="16:9">
 <h1 id="lets-get-the-counties-in-delaware">Let's get the counties in Delaware</h1>
 <h3 id="lets-break-it-down">Let's break it down</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-r">del.counties <span class="hljs-operator">&lt;-</span> d.counties <span class="hljs-operator">%&gt;%</span> dplyr<span class="hljs-operator">::</span>filter<span class="hljs-punctuation">(</span>ST <span class="hljs-operator">==</span> <span class="hljs-string">&quot;DE&quot;</span><span class="hljs-punctuation">)</span>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-r">del.counties <span class="hljs-operator">&lt;-</span> d.counties <span class="hljs-operator">%&gt;%</span> dplyr<span class="hljs-operator">::</span>filter<span class="hljs-punctuation">(</span>STATEFP10 <span class="hljs-operator">==</span> <span class="hljs-number">10</span><span class="hljs-punctuation">)</span>
 </code></pre>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" lang="en-US" data-marpit-pagination="17" style="--paginate:true;" data-marpit-pagination-total="22" data-size="16:9">
