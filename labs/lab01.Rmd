@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Read the instructions COMPLETELY before starting the lab
 
-This lab builds on many of the discussions and exercises from class. This lab also builds on Chapters 1-3 from your textbook, as well at R for Data Science by Hadley Wickham and Garrett Grolemund (https://r4ds.had.co.nz)
+This lab builds on many of the discussions and exercises from class. This lab also builds on Chapters 1-3 from your textbook, as well at R for Data Science by Hadley Wickham and Garrett Grolemund (https://r4ds.hadley.nz)
 
 ### Formatting your submission
 
@@ -41,7 +41,6 @@ This lab uses two files from the /data/CBW directory of this course's main repos
 library(tidyverse)
 library(ggplot2) #technically included in tidyverse
 library(sf)
-library(sp) #just in case
 ```
 
 
@@ -111,7 +110,7 @@ d.counties %>%
   group_by(STATEFP10) %>% 
   summarise(stateLandArea = sum(ALAND10))
 ```
-...and we're left with a sum of all the land area in each state (by FIPS code)
+...and we're left with a sum of all the land area in each state (by state FIPS code)
 
 
 ### A diversion into plots
@@ -164,7 +163,7 @@ Plotting this small number of points will be ok, so let's look at the data first
 glimpse(del.stations)
 plot(del.stations)
 ```
-There are only 2 points, and the plot isn't super helpful without any other sort of spatial reference, but you've succcessfully compelted your first spatial operation in R!
+There are only 2 points, and the plot isn't super helpful without any other sort of spatial reference, but you've successfully completed your first spatial operation in R!
 
 
 `sf` has a number of other useful functions built-in that you can try. For example, a quick calculation of the area of each county in Delaware:
@@ -172,7 +171,7 @@ There are only 2 points, and the plot isn't super helpful without any other sort
 del.counties %>% st_area() 
 ```
 
-Note that `sf` gives you the units of the calculation, but also that the data are in the form of a vector
+Note that `sf` gives you the units of the calculation, but also that the output data are in the form of a vector
 
 
 ## Your tasks

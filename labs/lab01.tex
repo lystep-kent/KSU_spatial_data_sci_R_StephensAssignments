@@ -144,7 +144,7 @@ lab}\label{read-the-instructions-completely-before-starting-the-lab}
 This lab builds on many of the discussions and exercises from class.
 This lab also builds on Chapters 1-3 from your textbook, as well at R
 for Data Science by Hadley Wickham and Garrett Grolemund
-(\url{https://r4ds.had.co.nz})
+(\url{https://r4ds.hadley.nz})
 
 \subsubsection{Formatting your
 submission}\label{formatting-your-submission}
@@ -199,14 +199,12 @@ data}\label{step-1-load-your-packages-and-data}
 \end{Shaded}
 
 \begin{verbatim}
-## Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
+## Warning: package 'sf' was built under R version 4.4.1
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(sp) }\CommentTok{\#just in case}
-\end{Highlighting}
-\end{Shaded}
+\begin{verbatim}
+## Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
+\end{verbatim}
 
 Next, load your data:
 
@@ -547,7 +545,7 @@ computation.
 \end{verbatim}
 
 \ldots and we're left with a sum of all the land area in each state (by
-FIPS code)
+state FIPS code)
 
 \subsubsection{A diversion into plots}\label{a-diversion-into-plots}
 
@@ -732,7 +730,7 @@ data first, then check the plot:
 
 \includegraphics{lab01_files/figure-latex/mypoints-1.pdf} There are only
 2 points, and the plot isn't super helpful without any other sort of
-spatial reference, but you've succcessfully compelted your first spatial
+spatial reference, but you've successfully completed your first spatial
 operation in R!
 
 \texttt{sf} has a number of other useful functions built-in that you can
@@ -751,7 +749,7 @@ Delaware:
 \end{verbatim}
 
 Note that \texttt{sf} gives you the units of the calculation, but also
-that the data are in the form of a vector
+that the output data are in the form of a vector
 
 \subsection{Your tasks}\label{your-tasks}
 

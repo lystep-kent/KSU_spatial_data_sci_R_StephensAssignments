@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.6)  6 JAN 2025 10:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.6)  30 JAN 2025 08:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -486,9 +486,9 @@ Overfull \hbox (76.2434pt too wide) in paragraph at lines 192--192
 ]
 
 LaTeX Font Warning: Font shape `T1/lmtt/bx/it' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 215.
+(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 213.
 
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 251.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 249.
 (/Users/pjbitterman/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -505,17 +505,17 @@ File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 <lab01_files/figure-latex/plots-1.pdf, id=97, 469.755pt x 325.215pt>
 File: lab01_files/figure-latex/plots-1.pdf Graphic file (type pdf)
 <use lab01_files/figure-latex/plots-1.pdf>
-Package pdftex.def Info: lab01_files/figure-latex/plots-1.pdf  used on input line 564.
+Package pdftex.def Info: lab01_files/figure-latex/plots-1.pdf  used on input line 562.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 564--565
+Underfull \hbox (badness 10000) in paragraph at lines 562--563
 [][]
  []
 
 <lab01_files/figure-latex/plots2-1.pdf, id=98, 469.755pt x 325.215pt>
 File: lab01_files/figure-latex/plots2-1.pdf Graphic file (type pdf)
 <use lab01_files/figure-latex/plots2-1.pdf>
-Package pdftex.def Info: lab01_files/figure-latex/plots2-1.pdf  used on input line 579.
+Package pdftex.def Info: lab01_files/figure-latex/plots2-1.pdf  used on input line 577.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
 
@@ -527,10 +527,10 @@ Package pdftex.def Info: lab01_files/figure-latex/plots2-1.pdf  used on input li
 <lab01_files/figure-latex/mypoints-1.pdf, id=122, 469.755pt x 325.215pt>
 File: lab01_files/figure-latex/mypoints-1.pdf Graphic file (type pdf)
 <use lab01_files/figure-latex/mypoints-1.pdf>
-Package pdftex.def Info: lab01_files/figure-latex/mypoints-1.pdf  used on input line 733.
+Package pdftex.def Info: lab01_files/figure-latex/mypoints-1.pdf  used on input line 731.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 733--737
+Underfull \hbox (badness 10000) in paragraph at lines 731--735
 [][]
  []
 
@@ -553,13 +553,13 @@ Package rerunfilecheck Info: File `lab01.out' has not changed.
 Here is how much of TeX's memory you used:
  11576 strings out of 475214
  181459 string characters out of 5765854
- 590333 words of memory out of 5000000
+ 589333 words of memory out of 5000000
  34318 multiletter control sequences out of 15000+600000
  594147 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,12n,79p,425b,591s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,425b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtko10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on lab01.pdf (13 pages, 236281 bytes).
+Output written on lab01.pdf (13 pages, 236102 bytes).
 PDF statistics:
  193 PDF objects out of 1000 (max. 8388607)
  155 compressed objects within 2 object streams
