@@ -1,5 +1,5 @@
 library(tidyverse)
-
+library(terra)
 
 
 rainfall <- c(0.0, 2.1, 2.5, .1, 0.0, 0.0, 6.8, 3.1, 2.2)
@@ -73,3 +73,9 @@ newdf %>% ggplot(., aes(x = deviation, y = after_stat(density))) +
        subtitle = "County scale",
        x = "Deviation",
        y = "Density")
+
+
+
+
+myraster <- terra::rast("./data/wildcard_thursday/ts_2018.0812_0818.L4.LCHMP3.CI.MAXIMUM_7day.tif")
+mypoints <- myraster %>% as.points()
