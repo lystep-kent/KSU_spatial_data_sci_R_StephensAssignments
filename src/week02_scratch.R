@@ -93,3 +93,14 @@ d.counties.area <- d.counties %>%
 # Technically the ".$" below is unnecessary, but it's nice to be verbose at times
 d.counties.area <- d.counties %>% 
   mutate(per = 100 * ALAND10 / (sum(.$ALAND10) + sum(.$AWATER10)))
+
+
+d.counties %>% 
+  as_tibble() %>%
+  select(-geometry) %>%
+  group_by(STATEFP10) %>% 
+  #summarise(mycount = n()) %>%
+  #count() %>%
+  tally()
+
+
