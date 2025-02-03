@@ -104,3 +104,9 @@ d.counties %>%
   tally()
 
 
+#
+
+d.stations %>% slice_min(., nchar(STATION_NA))
+
+
+d.stations %>% mutate(length = nchar(STATION_NA)) %>% slice(which.min(length))
