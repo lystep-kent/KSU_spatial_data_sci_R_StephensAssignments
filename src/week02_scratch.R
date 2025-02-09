@@ -55,7 +55,7 @@ p.stations <- "./data/CBW/Non-Tidal_Water_Quality_Monitoring_Stations_in_the_Che
 #d.counties <- terra::vect(p.counties)
 #d.stations <-terra::vect(p.stations)
 
-d.counties <- sf::read_sf(p.counties)
+d.counties <- sf::read_sf(p.counties) %>% sf::st_make_valid()
 d.stations <- sf::read_sf(p.stations)
 
 
@@ -110,3 +110,65 @@ d.stations %>% slice_min(., nchar(STATION_NA))
 
 
 d.stations %>% mutate(length = nchar(STATION_NA)) %>% slice(which.min(length))
+
+
+d.stations %>% 
+  mutate(myid = stringr::str_sub(STAID, 1, 3)) %>%
+  ggplot(., aes(x = Drainage_A)) +
+  geom_histogram(aes(fill = myid))
+
+
+myfun <- function(invector){
+  
+  
+  if(is.numeric(invector)){
+    sorted <- sort(invector)
+    vec_mean <- mean(invector)
+    vec_median <- median(invector)
+    
+    toReturn <- list(mean = vec_mean, median = vec_median, sorted = sorted)
+    
+    return(toReturn)  
+    
+  }
+  else{
+     print("error in input")
+  }
+  
+}
+
+myfun(c(1, 0, -1))
+myfun(c(10, 100, 1000))
+myfun(c(.1, .001, 1e-8))
+myfun(c("a", "b", "c"))
+
+
+
+myint <- sf::st_intersection(d.counties, d.stations)
+
+myint %>% as_tibble() %>% 
+  dplyr::select(-geometry) %>%
+  group_by(STATEFP10) %>%
+  count()
+
+
+nyareas <- d.counties %>% 
+  dplyr::filter(STATEFP10 == 36) %>%
+  mutate(calcedarea = sf::st_area(geometry)) 
+
+mean(nyareas$calcedarea)  
+
+
+
+
+d.counties %>% 
+  dplyr::filter(STATEFP10 == 36) %>%
+  mutate(calcedarea = sf::st_area(geometry)) %>%
+  summarise(mean = mean(calcedarea))
+
+
+myint %>% as_tibble() %>% 
+  dplyr::select(-geometry) %>%
+  group_by(STATEFP10) %>%
+  summarise(meandrain = mean(Drainage_A)) %>%
+  slice_max(meandrain)
