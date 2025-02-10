@@ -43,13 +43,13 @@
 \newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
 \newcommand{\BuiltInTok}[1]{#1}
 \newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
 \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
@@ -57,7 +57,7 @@
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\ExtensionTok}[1]{#1}
 \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
 \newcommand{\ImportTok}[1]{#1}
 \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
@@ -66,7 +66,7 @@
 \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
 \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
 \newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
 \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
@@ -120,7 +120,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead[LO, LE]{Lab 02}
-\fancyhead[RO, RE]{GEOG 491/891}
+\fancyhead[RO, RE]{Env Analysis in R}
 \makeatletter
 \renewcommand{\maketitle}{\bgroup\vspace*{-1cm}\setlength{\parindent}{0pt}
 \begin{flushleft}
@@ -135,19 +135,16 @@
 \begin{document}
 \maketitle
 
-\hypertarget{lab-02-r-as-a-gis}{%
-\section{Lab 02: R as a GIS}\label{lab-02-r-as-a-gis}}
+\section{Lab 02: R as a GIS}\label{lab-02-r-as-a-gis}
 
-\hypertarget{read-the-instructions-completely-before-starting-the-lab}{%
 \subsubsection{Read the instructions COMPLETELY before starting the
-lab}\label{read-the-instructions-completely-before-starting-the-lab}}
+lab}\label{read-the-instructions-completely-before-starting-the-lab}
 
 This lab builds on many of the discussions and exercises from class,
 including previous labs.
 
-\hypertarget{formatting-your-submission}{%
 \subsubsection{Formatting your
-submission}\label{formatting-your-submission}}
+submission}\label{formatting-your-submission}
 
 This lab must be placed into a public repository on GitHub
 (www.github.com). Before the due date, submit \textbf{on Canvas} a link
@@ -160,8 +157,7 @@ repository at the time you submit your link to Canvas. They can be in a
 separate text file, or if you decide to use an RMarkdown document, you
 can answer them directly in the doc.
 
-\hypertarget{data}{%
-\subsection{Data}\label{data}}
+\subsection{Data}\label{data}
 
 The data for this lab can be found in the \texttt{./data/CBW/} directory
 within the course GitHub repository.
@@ -187,8 +183,7 @@ Non-spatial datasets
   BMPreport2016\_landbmps.csv
 \end{enumerate}
 
-\hypertarget{working-with-tabular-data}{%
-\subsection{Working with tabular data}\label{working-with-tabular-data}}
+\subsection{Working with tabular data}\label{working-with-tabular-data}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -198,20 +193,16 @@ Non-spatial datasets
 \end{Shaded}
 
 \begin{verbatim}
-## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-\end{verbatim}
-
-\begin{verbatim}
-## v ggplot2 3.3.5     v purrr   0.3.4
-## v tibble  3.1.2     v dplyr   1.0.7
-## v tidyr   1.1.3     v stringr 1.4.0
-## v readr   1.4.0     v forcats 0.5.1
-\end{verbatim}
-
-\begin{verbatim}
+## -- Attaching core tidyverse packages ------------------------ tidyverse 2.0.0 --
+## v dplyr     1.1.4     v readr     2.1.5
+## v forcats   1.0.0     v stringr   1.5.1
+## v ggplot2   3.5.1     v tibble    3.2.1
+## v lubridate 1.9.3     v tidyr     1.3.1
+## v purrr     1.0.2     
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()
+## i Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 \end{verbatim}
 
 \begin{Shaded}
@@ -221,7 +212,11 @@ Non-spatial datasets
 \end{Shaded}
 
 \begin{verbatim}
-## Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1
+## Warning: package 'sf' was built under R version 4.4.1
+\end{verbatim}
+
+\begin{verbatim}
+## Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 \end{verbatim}
 
 \begin{Shaded}
@@ -229,6 +224,10 @@ Non-spatial datasets
 \FunctionTok{library}\NormalTok{(tmap)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tmap' was built under R version 4.4.1
+\end{verbatim}
 
 A ``join'' is a method to join multiple tables together using a matching
 ``key'' found in both datasets. For example:
@@ -284,9 +283,8 @@ same name, in which case the syntax is different:
 ## 3     3 Louis   999 apple
 \end{verbatim}
 
-\hypertarget{lets-take-a-look-at-some-tabular-data}{%
 \subsection{Let's take a look at some tabular
-data}\label{lets-take-a-look-at-some-tabular-data}}
+data}\label{lets-take-a-look-at-some-tabular-data}
 
 This dataset includes a list of best management practices (``BMPs'') to
 reduce nutrient and sediment pollution in the Chesapeake Bay Watershed.
@@ -298,28 +296,14 @@ reduce nutrient and sediment pollution in the Chesapeake Bay Watershed.
 \end{Shaded}
 
 \begin{verbatim}
-## 
+## Rows: 69601 Columns: 18
 ## -- Column specification --------------------------------------------------------
-## cols(
-##   StateAbbreviation = col_character(),
-##   GeographyName = col_character(),
-##   Geography = col_character(),
-##   Agency = col_character(),
-##   BMPShortName = col_character(),
-##   BMP = col_character(),
-##   BMPType = col_character(),
-##   Unit = col_character(),
-##   Sector = col_character(),
-##   FromLoadSource = col_character(),
-##   ToLoadSource = col_character(),
-##   AmountSubmitted = col_double(),
-##   AmountBackedOut = col_double(),
-##   AmountNotBackedOut = col_double(),
-##   AmountCredited = col_double(),
-##   Excess = col_double(),
-##   TotalAmountCredited = col_double(),
-##   Cost = col_double()
-## )
+## Delimiter: ","
+## chr (11): StateAbbreviation, GeographyName, Geography, Agency, BMPShortName,...
+## dbl  (7): AmountSubmitted, AmountBackedOut, AmountNotBackedOut, AmountCredit...
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 \end{verbatim}
 
 \begin{Shaded}
@@ -381,7 +365,8 @@ Let's recall how to do some simple tasks
 \end{Shaded}
 
 \begin{verbatim}
-## Warning: Removed 2 rows containing missing values (position_stack).
+## Warning: Removed 2 rows containing missing values or values outside the scale range
+## (`geom_bar()`).
 \end{verbatim}
 
 \includegraphics{lab02_files/figure-latex/review-1.pdf}
@@ -423,7 +408,8 @@ We can also group by multiple variables at the same time. For example:
 \end{Shaded}
 
 \begin{verbatim}
-## `summarise()` has grouped output by 'StateAbbreviation'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'StateAbbreviation'. You can override using
+## the `.groups` argument.
 \end{verbatim}
 
 For our last bit of review, let's make a few box plots:
@@ -464,12 +450,35 @@ For our last bit of review, let's make a few box plots:
 
 \includegraphics{lab02_files/figure-latex/review3-3.pdf}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# finally, an alternative to removing the outliers would be to log{-}transform the y{-}axis}
+\CommentTok{\# But be careful, this removes a lot of the data because the log of 0 is undefined}
+\NormalTok{bmps }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{ggplot}\NormalTok{(., }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ StateAbbreviation, }\AttributeTok{y =}\NormalTok{ AmountCredited)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ StateAbbreviation)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_log10}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"log10(AmountCredited)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in scale_y_log10(): log-10 transformation introduced infinite values.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 15585 rows containing non-finite outside the scale range
+## (`stat_boxplot()`).
+\end{verbatim}
+
+\includegraphics{lab02_files/figure-latex/review3-4.pdf}
+
 The last new item uses the \texttt{\%in\%} command. It's a way to
 quickly figure out which elements are inside of another. In that sense,
 it's similar to a spatial intersection, but for other types of data.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{\# setup a demonstration vector}
 \NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DecValTok{5}\NormalTok{)}
 
 \CommentTok{\# is 7 in our vector?}
@@ -538,7 +547,7 @@ Lastly, let's recall using tmap on our data. Also remember you can use
 \NormalTok{counties }\OtherTok{\textless{}{-}}\NormalTok{ counties }\SpecialCharTok{\%\textgreater{}\%}\NormalTok{ sf}\SpecialCharTok{::}\FunctionTok{st\_make\_valid}\NormalTok{()}
 
 \CommentTok{\# quick map of the data}
-\FunctionTok{tm\_shape}\NormalTok{(counties) }\SpecialCharTok{+} \FunctionTok{tm\_polygons}\NormalTok{(}\AttributeTok{col =} \StringTok{"ALAND10"}\NormalTok{)}
+\FunctionTok{tm\_shape}\NormalTok{(counties) }\SpecialCharTok{+} \FunctionTok{tm\_polygons}\NormalTok{(}\AttributeTok{fill =} \StringTok{"ALAND10"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -546,8 +555,7 @@ Lastly, let's recall using tmap on our data. Also remember you can use
 
 \newpage
 
-\hypertarget{your-tasks}{%
-\subsection{Your tasks}\label{your-tasks}}
+\subsection{Your tasks}\label{your-tasks}
 
 Using the following data\ldots{}
 
@@ -564,28 +572,14 @@ Using the following data\ldots{}
 \end{Shaded}
 
 \begin{verbatim}
-## 
+## Rows: 69601 Columns: 18
 ## -- Column specification --------------------------------------------------------
-## cols(
-##   StateAbbreviation = col_character(),
-##   GeographyName = col_character(),
-##   Geography = col_character(),
-##   Agency = col_character(),
-##   BMPShortName = col_character(),
-##   BMP = col_character(),
-##   BMPType = col_character(),
-##   Unit = col_character(),
-##   Sector = col_character(),
-##   FromLoadSource = col_character(),
-##   ToLoadSource = col_character(),
-##   AmountSubmitted = col_double(),
-##   AmountBackedOut = col_double(),
-##   AmountNotBackedOut = col_double(),
-##   AmountCredited = col_double(),
-##   Excess = col_double(),
-##   TotalAmountCredited = col_double(),
-##   Cost = col_double()
-## )
+## Delimiter: ","
+## chr (11): StateAbbreviation, GeographyName, Geography, Agency, BMPShortName,...
+## dbl  (7): AmountSubmitted, AmountBackedOut, AmountNotBackedOut, AmountCredit...
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 \end{verbatim}
 
 \ldots complete the following tasks.
@@ -595,12 +589,11 @@ EACH ANSWER. Label your variables sensibly and use comments such that I
 can find your answers and your work. The following tasks draw upon
 lecture, your assigned readings, and the examples shown above. As
 always, there are multiple ways of completing each task. Remember, it's
-always a good idea to peform some exploratory data analysis on your own
+always a good idea to perform some exploratory data analysis on your own
 prior to starting work.
 
-\hypertarget{task-1-aspatial-operations}{%
 \subsubsection{Task 1: Aspatial
-operations}\label{task-1-aspatial-operations}}
+operations}\label{task-1-aspatial-operations}
 
 1.1 Calculate summary statistics for the Cost of BMPs for each State
 (including DC)
@@ -626,9 +619,8 @@ choice what data and plots to use. The only requirement is that you link
 two of the datasets together in some manner. Be creative. Make it look
 nice (e.g., use proper labels, interesting colors/shading/size).
 
-\hypertarget{task-2-spatial-operations}{%
 \subsubsection{Task 2: Spatial
-operations}\label{task-2-spatial-operations}}
+operations}\label{task-2-spatial-operations}
 
 2.1 Find the 5 longest streams in the `streams opened by dam removal'
 dataset

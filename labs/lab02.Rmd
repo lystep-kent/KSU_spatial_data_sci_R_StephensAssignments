@@ -6,7 +6,7 @@ output:
    pdf_document: 
       template: my_template.tex
       keep_tex: true
-my_subtitle: "GEOG 491/891"
+my_subtitle: "Env Analysis in R"
 fancy: true
 geometry: margin=1in
 latex_engine: pdflatex
@@ -158,12 +158,20 @@ bmps %>%
   geom_boxplot(aes(fill = StateAbbreviation)) +
   facet_grid(Sector~.)
 
+# finally, an alternative to removing the outliers would be to log-transform the y-axis
+# But be careful, this removes a lot of the data because the log of 0 is undefined
+bmps %>% ggplot(., aes(x = StateAbbreviation, y = AmountCredited)) +
+  geom_boxplot(aes(fill = StateAbbreviation)) +
+  scale_y_log10() +
+  labs(y = "log10(AmountCredited)")
+
 ```
 
 The last new item uses the ```%in%``` command. It's a way to quickly figure out which elements are inside of another. In that sense, it's similar to a spatial intersection, but for other types of data.
 
 ```{r using in, echo=TRUE, message=TRUE}
 
+# setup a demonstration vector
 x <- c(1, 2, 3, 4, 5)
 
 # is 7 in our vector?
@@ -185,7 +193,7 @@ counties %>% sf::st_is_valid()
 counties <- counties %>% sf::st_make_valid()
 
 # quick map of the data
-tm_shape(counties) + tm_polygons(col = "ALAND10")
+tm_shape(counties) + tm_polygons(fill = "ALAND10")
 ```
 
 \newpage
@@ -207,7 +215,7 @@ bmps <- read_csv("../data/CBW/BMPreport2016_landbmps.csv")
 
 ...complete the following tasks.
 
-Complete each task COMPLETELY USING R CODE. YOU MUST SHOW YOUR WORK FOR EACH ANSWER. Label your variables sensibly and use comments such that I can find your answers and your work. The following tasks draw upon lecture, your assigned readings, and the examples shown above. As always, there are multiple ways of completing each task. Remember, it's always a good idea to peform some exploratory data analysis on your own prior to starting work.
+Complete each task COMPLETELY USING R CODE. YOU MUST SHOW YOUR WORK FOR EACH ANSWER. Label your variables sensibly and use comments such that I can find your answers and your work. The following tasks draw upon lecture, your assigned readings, and the examples shown above. As always, there are multiple ways of completing each task. Remember, it's always a good idea to perform some exploratory data analysis on your own prior to starting work.
 
 ### Task 1: Aspatial operations
 
