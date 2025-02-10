@@ -33,7 +33,7 @@ library(tmap)
 
 Let's load some data. Note, this is a different file format than you're (probably) used to. Check out https://www.geopackage.org if you want to learn more (and you should).
 
-You may also notice the path is structured slightly differently that before. When in standard R script (for example, myscript.R), the "." notation refers to the location of the RStudio project file. HOWEVER, when using Rmd files, the starting location is where the .Rmd file is. Therefore, we need to edit our path a bit. ".." means "go up a level" (in this case, FROM the src director and TO the root of the project) THEN find the `data` directory, then the `ohio` directory, then find the file.
+You may also notice the path is structured slightly differently that before. When in standard R script (for example, myscript.R), the "." notation refers to the location of the RStudio project file. HOWEVER, when using Rmd files, the starting location is where the .Rmd file is. Therefore, we need to edit our path a bit. ".." means "go up a level" (in this case, FROM the src directory and TO the root of the project) THEN find the `data` directory, then the `ohio` directory, then find the file.
 ```{r readstreams, echo=FALSE}
 oh_streams <- read_sf("../data/ohio/ohio_rivers.gpkg")
 ```
@@ -193,7 +193,7 @@ tm_shape(buffs) + tm_polygons(fill = "assessmentunitname")
 
 ```
 
-Let's add some parks. There are two parks files in the `/data/ohio` directory. One is a shapefile, one is a geopackage. What's the difference?
+Let's add some parks. There are two parks files in the `/data/ohio/` directory. One is a shapefile, one is a geopackage. What's the difference?
 
 
 ```{r}
@@ -201,10 +201,10 @@ oh_parks_shp <- read_sf("../data/ohio/ohio_parks.shp")
 oh_parks <- read_sf("../data/ohio/oh_parks.gpkg")
 ```
 
-They're VERY similar, but there are some cases where they might not be the same. Think about when/where, and let's have a class dicussion if you're not sure
+They're VERY similar, but there are some cases where they might not be the same. Think about when/where, and let's have a class discussion if you're not sure
 
 
-Let's subset the parks to our study area. Need to project first!
+Let's subset the parks to our study area. Don't forget - we need to reproject first!
 ```{r}
 oh_parks_p <-  sf::st_transform(oh_parks, 6346) 
 
@@ -223,13 +223,17 @@ tm_shape(study.area_p) + tm_polygons(fill = "NAME") +
   tm_shape(oh_parks_p_studyarea) + tm_polygons(fill = "FEATTYPE", palette = "brewer.dark2") +
   tm_shape(study.streams) + tm_lines(col = "red")
 
+## Perhaps a bit on the ugly side, but it gets the point across
+
 ```
 
 
 ## YOUR TASK
 
-- find ALL of the OHIO parks within 1km of a 303d stream
-- Make a map of just those parks (not all parks), overlaid on a county map
+I have given you all of the tools to complete the following items:
+
+- find ALL of the Ohio parks within 1km of a 303d stream
+- Make a map (using `tmap`) of just those parks (not all parks), overlaid on a Ohio county map
 - Add a color to the parks based on the type of park (like we did)
 
 
