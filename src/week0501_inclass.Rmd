@@ -14,6 +14,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Intro
 
 Today's exercise is a bit different. This notebook will demonstrate some new techniques while also allowing you to become more comfortable with the R Markdown (Rmd) format. You can click the little green arrow for each of the code blocks to run everything IN THAT BLOCK.
 
@@ -29,11 +30,12 @@ library(tmap)
 
 ```
 
-
+## A digression into geopackages
 
 Let's load some data. Note, this is a different file format than you're (probably) used to. Check out https://www.geopackage.org if you want to learn more (and you should).
 
 You may also notice the path is structured slightly differently that before. When in standard R script (for example, myscript.R), the "." notation refers to the location of the RStudio project file. HOWEVER, when using Rmd files, the starting location is where the .Rmd file is. Therefore, we need to edit our path a bit. ".." means "go up a level" (in this case, FROM the src directory and TO the root of the project) THEN find the `data` directory, then the `ohio` directory, then find the file.
+
 ```{r readstreams, echo=FALSE}
 oh_streams <- read_sf("../data/ohio/ohio_rivers.gpkg")
 ```
@@ -51,7 +53,7 @@ And then we can map it. I'm introducing a new package `tmap` today. This package
 tm_shape(oh_streams) + tm_lines()
 ```
 
-# Let's grab some more data
+## Let's grab some more data
 
 ```{r}
 oh_counties <- read_sf("../data/ohio/oh_counties.gpkg")
@@ -87,7 +89,7 @@ Let's make a slightly larger study area to include Summit County as well. How co
 port.summit <- oh_counties %>% dplyr::filter(., NAME == "Portage" | NAME == "Summit")
 ```
 
-That can be a bit clunky if we need to string together a bunch of "or" commands. So let's try a different notation that's also a bit more reuseable.
+As you can imagines, that can get a bit clunky if we need to string together a bunch of "or" commands. So let's try a different notation that's also a bit more reuseable.
 
 ```{r}
 # what counties do I want?
@@ -105,34 +107,36 @@ Plot it to check, add a fill based on a variable. It very handily adds a simple 
 study.area %>% tm_shape(.) + tm_polygons(fill = "NAME")
 ```
 
-The streams dataset includes a variable for whether that stream segment is classified as impaired and on the "303d" list, which is list of impaired streams defined by section 303d of the Clean Water Act. Let's filter the line file such that we only have those streams
+The streams dataset includes a variable for whether that stream segment is classified as impaired and on the "303d" list, which is list of impaired streams as defined by section 303d of the Clean Water Act. Let's filter the line file such that we only have those streams
 
 ```{r}
 streams.303d <- oh_streams %>% dplyr::filter(., on303dlist == "Y") 
-# It would make more sense if they used a logical rather than Y/N, but I didn't create the data
+# It would make more sense if they used a logical (T/F) rather than Y/N, but I didn't create the data
 ```
 
 
 Next, let's find only those 303d streams that are in our study area? What's the spatial operation again? Yes, an intersection
 
-```{r eval=FALSE, include=FALSE}
+```{r eval=FALSE, message=TRUE, warning=TRUE, include=FALSE}
 study.streams <- sf::st_intersection(streams.303d, study.area)
 ```
 
 Oops, that didn't work. What was the problem?
 
 
-Let's try again, this time dealing with the spatial reference/coordinate systems properly
+Let's try again, this time dealing with the spatial reference/coordinate systems properly. 
 
 ```{r}
 st_crs(study.area)
 st_crs(oh_streams)
 
-# they're not the same, so we need to reproject them into a common CRS
+# they're not the same, so we need to reproject them into a common CRS...
+
 
 # The 6346 is an EPSG code (see: https://epsg.io) for a UTM 16N CRS
 
 # let's reproject this one first
+# ... or in `sf` parlance, "transform" it
 study.area_p <- sf::st_transform(study.area, 6346) 
 
 # we COULD (and maybe should) use a similar command to reproject the streams file too. 
@@ -153,7 +157,36 @@ oh_streams_p <- study.area_p %>% st_crs() %>% sf::st_transform(oh_streams, .)
 
 ```
 
-now let's try that intersect function again
+
+Let's compare how the CRS impacts calcultions
+
+```{r}
+
+# unprojected areas
+areas.unproj <- study.area %>% sf::st_area()
+
+# projected areas
+areas.proj <- study.area_p %>% sf::st_area()
+
+# note that they're both in meters
+# test for equality
+areas.unproj == areas.proj
+
+# test of differences
+areas.unproj - areas.proj
+
+# differences as a percent of original
+100 * (areas.unproj - areas.proj) / areas.unproj
+
+# not a MASSIVE difference, but can still introduce error
+
+```
+
+
+
+
+
+Now let's try that intersect function again
 
 ```{r}
 study.streams <- sf::st_intersection(oh_streams_p, study.area_p)
@@ -180,7 +213,7 @@ tm_shape(study.area_p) + tm_polygons(fill = "NAME") +
 ```
 
 
-# Buffers
+## Buffers
 
 What's a buffer?
 
@@ -226,17 +259,41 @@ tm_shape(study.area_p) + tm_polygons(fill = "NAME") +
 ## Perhaps a bit on the ugly side, but it gets the point across
 
 ```
+## Distances
+
+As an example, let's say we want to know the distance between parks and streams. We can use the following function
+
+```{r}
+sf::st_distance(study.streams, oh_parks_p_studyarea) 
+```
 
 
-## YOUR TASK
+Yikes, that's a bit of a mess. Let's turn that into a tibble (which is a kind of fancy table, and also a replacement for the tidyverse data frame)
+
+```{r}
+sf::st_distance(study.streams, oh_parks_p_studyarea) %>% as_tibble()
+```
+
+That's more intepretable. We have a 3 x 345 table. How might you infer what each row and each column represent? 
+(Hint, go back to the data you gave to the `st_distance()` function)
+
+
+
+## YOUR TASKS
 
 I have given you all of the tools to complete the following items:
 
+### Task(s) 2
 - find ALL of the Ohio parks within 1km of a 303d stream
 - Make a map (using `tmap`) of just those parks (not all parks), overlaid on a Ohio county map
 - Add a color to the parks based on the type of park (like we did)
 
+### Task(s) 2
+- Calculate the distance between parks and 303d streams in the study area
+- Then, calculate the *difference* between projected and unprojected distances
+- Then, make a histogram of those differences (better termed "errors")
 
-## Bonus work
+
+### Bonus work
 - How many counties do NOT have a 303d stream in them?
 - What county intersects the most parks? The most streams? The most 303d streams?

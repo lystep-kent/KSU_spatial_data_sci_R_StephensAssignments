@@ -1,11 +1,11 @@
 
-# Final Project proposal assignment
+# Final Project
 
 Your term project focuses on a geoprocessing or spatial analysis task of your choosing. The project objective is at your discretion. However, the best projects are typically the ones that have some special salience to you - perhaps related to your current research, employment, career goals, or hobbies. The project **must** use R, and it **must** address a "spatial problem." Further, the project should emphasize the problem you wish to solve, rather than the number of lines of code you write. It is strongly encouraged that your project *slightly exceed* your programming skill level. There is strong research suggesting that we learn most effectively when we "stretch" ourselves just beyond our current skill/knowledge level.
 
 ## Deliverable 1: project proposal (50 points)
 
-You must submit a proposal for your projet detailing the following items:
+You must submit a proposal for your project detailing the following items:
 
 1. What is the topic area and problem of interest
 2. Why are you interested in this problem/area
@@ -14,6 +14,8 @@ You must submit a proposal for your projet detailing the following items:
 5. What you expect the outcome of the project will be. Note, you will always provide your code, so think about how you would define "success" for your objective (e.g., a measurement of efficiency, a completed task, completed analysis)
 6. Preliminary or sample data
 7. Any preliminary work (strongly encouraged)
+
+If you are having difficulty developing your own research question(s) and data, I have a list of candidate questions you may use as inspiration.
 
 
 ## Deliverable 2: in-class project update (25 points)
@@ -30,7 +32,7 @@ The class is expected to listen attentively and ask questions of the speaker. Yo
 
 ## Deliverable 3: in-class final presentation (75 points)
 
-You will also give a final presentation during the final week of class detailing the full extent of your project work and accomplishements. Undergraduate students will give a 7-10 minute presentation, while graduate students will give a 10-13 minute presentation. *Graduate students are expected to draw upon the work of others (e.g., scientific literature, reports, technical documents) to situate their work in a broader context.*
+You will also give a final presentation during the final week of class detailing the full extent of your project work and accomplishments. Undergraduate students will give a 7-10 minute presentation, while graduate students will give a 10-13 minute presentation. *Graduate students are expected to draw upon the work of others (e.g., scientific literature, reports, technical documents) to situate their work in a broader context.*
 
 In this presentation, you will at a minimum discuss:
 
@@ -41,15 +43,15 @@ In this presentation, you will at a minimum discuss:
 5. The implications of your work (e.g., for your research, job)
 6. Future goals and objectives
 
-## Deliverable 4: final paper (250 points)
+## Deliverable 4: final report (250 points)
 
-Your final paper will follow the standard structure of scientific article (e.g., a “mini-study”) where you should provide:
+Your final report will follow the format of a short technical report where you should provide:
 
 1. A short introduction to the topic
 2. (Required for graduate students, optional for undergraduates) background on how this problem and methods have been addressed in the work of others (e.g., scientific literature, reports, technical documents)
 3. A methods section detailing the work you completed
 4. A results section that explains, in detail, what you accomplished. Be sure to connect to how you defined success in the project proposal (e.g., what should be understood from them)
-5. A dicussion section that covers the implications of your results, including a critical self-reflection of the project (e.g., what limitations, assumptions, or uncertainties are present). Also, what have you learned and what would you do differently next time (and why)?
+5. A discussion section that covers the implications of your results, including a critical self-reflection of the project (e.g., what limitations, assumptions, or uncertainties are present). Also, what have you learned and what would you do differently next time (and why)?
 6. A conclusion that wraps everything up
 
 ### Other details:
