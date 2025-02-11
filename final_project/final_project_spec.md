@@ -15,7 +15,16 @@ You must submit a proposal for your project detailing the following items:
 6. Preliminary or sample data
 7. Any preliminary work (strongly encouraged)
 
-If you are having difficulty developing your own research question(s) and data, I have a list of candidate questions you may use as inspiration.
+If you are having difficulty developing your own research question(s) and data, I have a list of candidate questions you may use as inspiration. (see the research_question_inspiration file in this GitHub directory)
+
+Other details:
+
+- 1-2 pages, inclusive of figures
+- Microsoft Word document or PDF
+- 1-inch margins
+- Font: Times New Roman, size 12, 1.5 spacing or less
+- Cite all sources using a standard referencing format (e.g., Chicago, APA, your favorite journal). However, you may NOT use an end note style.
+
 
 
 ## Deliverable 2: in-class project update (25 points)
@@ -56,12 +65,13 @@ Your final report will follow the format of a short technical report where you s
 
 ### Other details:
 
-- 5-7 pages exclusive of figures (891 students 8-10 pages)
-- At least two figures
+- 2 pages exclusive of figures (graduate students 3-4 pages)
+- At least three figures, two of which must be maps
 - Microsoft Word document or PDF
 - 1-inch margins
 - Font: Times New Roman, size 12, 1.5 spacing or less
 - Cite all sources using a standard referencing format (e.g., Chicago, APA, your favorite journal). However, you may NOT use an end note style.
+- It is strongly suggested that you format your text using an RMarkdown notebook or Quarto document
 
 
 ### Code
