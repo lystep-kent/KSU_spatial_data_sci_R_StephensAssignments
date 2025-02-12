@@ -1,0 +1,142 @@
+---
+title: "EnvDataAnalysis_Lab1"
+author: "Lydia Stephens"
+date: "2025-01-30"
+output:
+  pdf_document: default
+  --output-directory= "C: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Load in appropiate packages
+```{r}
+  library(tidyverse)
+  library(sf)
+  library(dplyr)
+```
+
+#Loading in shapefiles
+```{r}
+  p.counties <- "County_Boundaries.shp"
+  p.stations <-  "Non-Tidal_Water_Quality_Monitoring_Stations_in_the_Chesapeake_Bay.shp"
+
+  d.counties <- sf::read_sf(p.counties)
+  d.stations <- sf::read_sf(p.stations)
+  
+glimpse(d.counties)
+```
+#Task 1: Basic Data Manipulation
+##1.1-Calculating land area of counties as % of total area for the state.
+```{r}  
+d.counties <- d.counties %>% group_by(STATEFP10) %>% mutate(percent_answer = (ALAND10 / (sum(ALAND10) + sum(AWATER10)) * 100))
+d.counties
+```  
+Total area percentages can be found within the percent_answer column in the d.counties tibble.
+
+##1.2-Finding the county with the largest proportion of its land as water for each state
+```{r}
+d.counties %>% mutate(., percent_water = (AWATER10 / (AWATER10 + ALAND10))) %>% group_by(STATEFP10) %>% slice_max(., percent_water)
+```
+ 
+##1.3-Count the number of counties in each state
+```{r}
+d.counties %>%  as_tibble() %>% dplyr::select(-geometry) %>% count(STATEFP10)
+```
+
+##1.4- Determine which station has the shortest name in the study area
+```{r}
+d.stations %>% slice_min(nchar(STATION_NA))
+``` 
+ Both Abram Creek and Dragon Swamp have 26 characters in the STATION_NA column
+ 
+#Task 2: Plotting attribute data
+##2.1- Scatterplot that correlates land area and   water area for each county
+```{r}
+ggplot(data = d.counties, aes(x = ALAND10, y = AWATER10, color = STATEFP10)) +
+geom_point() +
+labs(title = "Chesapeake Bay Counties: Land vs. Water Area",
+x = "Land Area",
+y = "Water Area",
+color = "State ID") +
+theme_classic()
+```
+##2.2 Drainage Area Histogram
+```{r}
+hist(d.stations$Drainage_A,
+main = "Drainage Area Distribution in Chesapeake Bay Monitoring Stations",
+xlab = "Drainage Area",
+col = "dark blue",
+border = "light blue")
+```
+##2.3 Grouped Drainage Histogram
+```{r}
+sf::sf_use_s2(FALSE)
+station.state <- sf::st_intersection(d.stations, d.counties)
+ggplot(data =station.state, aes(x = Drainage_A, fill = STATEFP10)) +
+geom_histogram() +
+labs(title = "Chesapeake Bay Drainage Areas By State",
+x = "Drainage Area",
+y = "Frequency",
+fill = "State ID")
+
+```
+
+#Task 3: Writing a Function
+```{r}
+first <- c(1, 0, -1)
+second <- c(10, 100, 1000)
+third <- c(.1, .001, 1e8)
+fourth <- c("a", "b", "c")
+
+lab1_function <- function(statcalculation){
+  sort <- sort(statcalculation)
+  mean <- mean(statcalculation)
+  median <- median(statcalculation)
+  max <- max(statcalculation)
+  min <- min(statcalculation)
+   if(is.numeric(statcalculation)){
+      return(list(Mean = mean, Median = median, Max = max, Min =min, Sorted_Vector = sort))
+    } else{
+      print("ERROR: Input is not numeric")
+}
+}
+
+print(lab1_function(first))
+print(lab1_function(second))
+print(lab1_function(third))
+
+print(lab1_function(fourth))
+```
+
+#Task 4: Slightly more complicated spatial analysis
+##4.1-Calculate the number of monitoring stations in each state
+```{r}
+sf_use_s2(FALSE)
+station.state <- sf::st_intersection(d.stations, d.counties)
+station.state %>% group_by(., STATEFP10) %>% count(.)
+```
+##4.2- Calculate the average size of NY counties
+```{r}
+d.counties %>% dplyr::filter(., STATEFP10 == 36) %>% summarise(., MEAN = mean(Shape_Area))
+```
+##4.3 Which state has the greatest average drainage area
+```{r}
+
+sf::st_intersection(d.stations, d.counties) %>% group_by(STATEFP10) %>% mutate(avg_drain = mean(Drainage_A)) %>% arrange(desc(avg_drain)) %>% head(STATEFP10, n = 1)
+
+```
+PA has the greatest average drainage area
+
+#Questions
+##1
+The two intersection functions are NOT equivalent. In the format of the function (A, B), it produces an output for where A intersects B. For the example provided  "sf::st_intersection(d.stations, del.counties)", the output will be stations that intersect with the state of Delaware. 
+
+"sf::st_intersection(del.counties, d.stations)" This output is the county data with stations in them. So while the counties are the same in each output, the attribute data associated with them is different. The functions would be interchangeable depending on the desired answer (e.g. "How many stations are in Delaware" would be answered by either function)
+
+##2
+The most challenging part of this lab was understanding the format of different functions. Usually, I had the right code with improper grammar and it would take a lot of time to decipher the error codes and correct it. Nearly everything was new to me, so it was a lot of trial and error to complete the tasks.
+##3
+I would like to see biology related examples, such as critical habitat analysis. I would also like to learn more about pulling in information from outside sources (not just downloading files)
+Maybe an activity to make simple spatial predictions?
