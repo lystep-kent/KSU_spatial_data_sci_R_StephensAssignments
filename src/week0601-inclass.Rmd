@@ -73,10 +73,20 @@ tmap_mode("plot")
 tm_shape(ca) + tm_polygons() + tm_shape(ks) + tm_dots(fill='navyblue', size = .2)
 ```
 
+### Dots vs. bubbles
+In the tmap R package, both `tm_dots()` and `tm_bubbles()` are used to visualize point data, but they differ in how they represent attributes:
+
+`tm_dots()`: Plots points as uniform-sized dots, useful for simple point visualizations where all points are given equal emphasis.
+
+`tm_bubbles()`: Plots points as circles (bubbles) with variable sizes based on an attribute, allowing visualization of differences in magnitude.
+
+_Key Difference_: `tm_dots()` is for uniform point representation, while `tm_bubbles()` uses point size to convey quantitative differences in an attribute.
+
+
 
 # Interpolation
 
-Based on your readings, how does it work???
+Based on your readings, what's the purpose of interpolation and how does it work???
 
 JARGON AHOY!!!
 
@@ -87,10 +97,11 @@ KDE vs. IDW vs. KRIGING... ANY IDEAS?
 
 Kernel Density Estimation (KDE) is a non-parametric spatial analysis technique used to estimate the probability density function of point data over a continuous surface, effectively identifying areas of high and low concentration.
 
+
 There are many different packages that can calculate a KDE. We're going to use `SpatialKDE` as an example
 
 ```{r}
-# Define some initial parameters
+# Define some initial parameters - what are the units???
 
 cell_size <- 5000
 band_width <- 10000
@@ -100,6 +111,10 @@ band_width <- 10000
 ```
 
 
+Wait, we said KDE was non-parametric, and yet we just defined parameters. 
+What does it mean to be "non-parametric"? Does it mean NO parameters?
+
+
 We need to setup a grid first. We'll use the California shape to get started
 ```{r}
 grid_ca <- ca %>%
@@ -107,7 +122,7 @@ grid_ca <- ca %>%
 ```
 
 
-Plot it just to check
+Plot the grid just to check
 ```{r}
 tm_shape(grid_ca) + tm_polygons()
 ```
@@ -116,22 +131,33 @@ Let's do the KDE, might take a while to run
 
 ```{r}
 kde <- ks %>%
-  kde(band_width = band_width, kernel = "quartic", grid = grid_ca)
+  SpatialKDE::kde(band_width = band_width, kernel = "quartic", grid = grid_ca)
 ```
 
-Visualize it again
+Visualize the KDE
 
 ```{r}
 tm_shape(kde) +
   tm_polygons(col = "kde_value", palette = "viridis", title = "KDE Estimate") 
 ```
-### An alternative KDE with a raster data model
+A bit hard to see, so how would we allow for interactive mapping?
+ 
+```{r}
+tmap_mode("view")
 
-In this first example, we were left with a bunch of small square polygons. They LOOK like a raster image, but they're not. 
+tm_shape(kde) +
+  tm_polygons(col = "kde_value", palette = "viridis", title = "KDE Estimate") 
+```
 
-So let's instead do a KDE with a raster.
 
-We first prepare a raster with given cell size which is slightly bigger than convex hull of the data.
+
+### An alternative KDE method using a raster data model
+
+In this first example, we the grid function created a bunch of small square polygons. They LOOK like a raster image, but they're not. 
+
+So for the sake of illustration, let's instead do a KDE with a raster.
+
+We first prepare a raster with given cell size. The raster should be slightly bigger than convex hull of the data.
 ```{r}
 raster_ks <- ks %>%
   create_raster(cell_size = cell_size, side_offset = band_width)
@@ -146,6 +172,8 @@ kde <- ks %>%
 
 And like before, we can plot it
 ```{r}
+tmap_mode("view")
+
 tm_shape(kde) +
   tm_raster(palette = "viridis", title = "KDE Estimate") +
   tm_shape(ks) 
@@ -177,8 +205,9 @@ idw_result <- gstat::idw(ks$pbe1415~1, ks, grd_idw)
 
 
 
-
 In R, the ~1 notation is commonly used in modeling functions to specify an intercept-only model, meaning that no predictor variables are included. This notation appears in various contexts, including spatial interpolation `(gstat::idw())`, `regression (lm())`, and mixed-effects modeling `(lme4::lmer())`, where it indicates that predictions or estimates should be based only on a constant value (e.g., a global mean or spatial trend) rather than explanatory variables.
+
+Let's plot with ggplot instead of tmap
 
 ```{r}
 ggplot() + geom_stars(data = idw_result, 
