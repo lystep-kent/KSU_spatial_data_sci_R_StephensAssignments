@@ -63,8 +63,7 @@ clip_raster_to_bounding <- function(in.raster.path, boundingPolygon.path) {
 calc_area_by_thresholds <- function(in.raster,
                                     boundingPolygon.path,
                                     start_date,
-                                    end_date,
-                                    lake_transform) {
+                                    end_date) {
   # ??
   bb <- sf::read_sf(boundingPolygon.path) ## read shapefile
   
@@ -170,8 +169,7 @@ toCalcArea <- list(
   clipped.images,
   bb.path,
   image.files$start_date,
-  image.files$end_date,
-  "champlain_olci"
+  image.files$end_date
 )
 
 # How does pmap_df work, and what is it doing in this context?
