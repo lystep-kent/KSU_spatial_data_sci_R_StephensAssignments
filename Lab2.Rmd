@@ -1,0 +1,128 @@
+---
+title: "Lab2"
+author: "Lydia Stephens"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Loading in packages and data
+##packages
+```{r}
+library(tidyverse)
+library(sf)
+library(tmap)
+library(stringr)
+library(matrixStats)
+```
+##data
+```{r}
+
+counties <- sf::read_sf("./data/CBW/County_Boundaries.shp") %>% 
+  sf::st_make_valid()
+  
+dams <- sf::read_sf("./data/CBW/Dam_or_Other_Blockage_Removed_2012_2017.shp") %>% 
+  sf::st_make_valid()
+  
+streams <- sf::read_sf("./data/CBW/Streams_Opened_by_Dam_Removal_2012_2017.shp") %>% 
+  sf::st_make_valid()
+
+bmps <- read_csv("./data/CBW/BMPreport2016_landbmps.csv")
+
+```
+
+#Task 1
+##1.1- Summary Statistics for cost of BMP's by state
+```{r}
+
+bmps %>% group_by(StateAbbreviation) %>% na.omit(.,) %>% summarise(Total = sum(Cost), Average = mean(Cost), StDev = sd(Cost), Median = median(Cost), Max = max(Cost), Min = min(Cost))
+
+```
+##1.2- Scatterplot Cost vs. TotalAmountCredited (Acres)
+```{r}
+bmps %>% dplyr::filter(Unit == "Acres") %>% ggplot(., aes(x = TotalAmountCredited, y = Cost)) +
+  geom_point() +
+  labs(title = "Total Amount Credited vs. Cost by State",
+x = "Total Amount Credited (ln($))",
+y = "Cost (ln($))") +
+  scale_y_log10() +
+  scale_x_log10() +
+  theme_minimal()
+```
+##1.3-Boxplot of cover crop BMPs
+```{r}
+bmps %>% dplyr::filter(str_detect(BMP, "Cover Crop") & TotalAmountCredited < 5000) %>%
+ggplot(., aes(x = StateAbbreviation, y = TotalAmountCredited)) +
+  geom_boxplot() +
+  labs(title = "Total Amount Credited for Cover Crop BMP Projects Across States",
+x = "State",
+y = "Total Credit (ln($))") +
+  scale_y_log10() +
+  theme_minimal()
+
+```
+##1.4-Dam scatterplot
+```{r}
+dams %>% dplyr::filter(YEAR > 0) %>% ggplot(., aes(x = YEAR, y = STATE)) +
+  geom_point() +
+  labs(title = "Timeline of Dam Implementation Across Virginia and Pennsylvania", x = "Year", y = "State") +
+  theme_minimal()
+```
+##1.5 Joined data analysis
+BMP in waterbodies affected by dams
+```{r}
+bmp.dam <- left_join(bmps, dams, by = c("StateAbbreviation" = "STATE"))
+
+
+bmp.dam %>% drop_na(HUC6_NAME) %>%
+ggplot(., aes(x = HUC6_NAME, fill = BMPType, na.rm = TRUE)) +
+geom_bar() +
+labs(title = "BMP Type in Dam-Affected Water Basins",
+x = "Basin Name",
+y = "Frequency",
+fill = "BMP") +
+theme(axis.text = element_text(angle = 60, hjust = 1))
+
+```
+#Task 2
+##2.1- 5 longest rivers in 'dams' dataset
+```{r}
+streams %>% slice_max(LengthKM, n = 5)
+
+```
+##2.2- 3 counties with greatest total length of streams
+```{r}
+streams <- st_transform(streams, st_crs(counties))
+
+streamcounty <- st_join(streams, counties, join = st_within)
+
+streamcounty %>% group_by (NAME10) %>% summarise(StreamSum = sum(LengthKM)) %>% slice_max(StreamSum, n = 3)
+
+```
+##2.3- County map of total BMPs funded
+```{r}
+bmps <- bmps %>% mutate(County = str_extract(Geography, "^[^,]+"))
+
+bmp.county <-left_join(counties, bmps, by = c("NAME10" = "County"))
+bmp.county <- bmp.county %>% group_by(NAME10) %>% mutate(countytotal = sum(Cost, na.rm = T))
+
+tm_shape(bmp.county) + tm_polygons(fill = "countytotal")
+      
+```
+##2.4- Closest stream segment to each removed dam
+```{r}
+st_transform(streams, st_crs(dams))
+
+dist <- st_nearest_feature(dams, streams)
+dams <- dams %>% as.data.frame() %>% mutate(closeststream = dist) %>% left_join(dams, streams, by = c("closeststream" = "OBJECTID_1"))
+view(dams)
+```
+##2.5- Dams per state
+```{r}
+dams <- sf::read_sf("./data/CBW/Dam_or_Other_Blockage_Removed_2012_2017.shp") %>% 
+  sf::st_make_valid()
+dams %>% group_by(STATE) %>% summarise(Removed_Dams = n())
+```
