@@ -1,0 +1,135 @@
+---
+title: "InClassTeaching"
+author: "Lydia Stephens"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Necessary Packages 
+```{r}
+library(sf)
+library(terra)
+library(dplyr)
+library(spData)
+library(tmap)
+library(rmapshaper)
+library(smoothr)
+```
+#Ohio County Data
+```{r}
+oh_county <- "./data/ohio/oh_counties.gpkg"
+oh_counties <- sf::read_sf(oh_county)
+
+qtm(oh_counties)
+```
+
+#Simplify
+Simplification functions can be run on vector objects (lines and polygons) to create more generalized boundaries.
+##st_simplify
+```{r}
+oh_simp = st_simplify(oh_counties, dTolerance = 4000)  
+qtm(oh_simp)
+```
+st_simplify runs on individual polygons, so it can be problematic for adjacent boundaries. The higher the tolerance value, the more space between adjacent polygons.
+
+###Simplification and Storage
+Notably, simplifying is good way to reduce memory of specific shapefiles
+```{r}
+object.size(oh_counties)
+
+object.size(oh_simp)
+```
+##ms_simplify
+For highly generalized polygons, an alternative is ms_simplify(). By including 'keep_shapes = TRUE', it allows for boundary conservation, no matter how simplified the individual objects become.
+
+```{r}
+oh_simp2 = rmapshaper::ms_simplify(oh_counties, keep = 0.001, keep_shapes = TRUE)
+
+qtm(oh_simp2)
+```
+
+##smoothr
+Although it runs into the same issue as st_simplify with adjacent borders, smoothing geometries can be useful for vector features derived from rasters. The main difference between the two methods is removing vertices (st_simplify) vs interpolating geometric boundaries (smoothing).
+
+```{r}
+oh_simp3 = smoothr::smooth(oh_counties, method = "ksmooth", smoothness = 60)
+
+qtm(oh_simp3)
+```
+This method "ksmooth" uses Gaussian Kernel Regression, which essentially boils down into adding a ton of vertices to create a more round appearance (e.g. cutting a circle out of paper). Other options for smoothing include Chaikin’s corner cutting algorithm and spline interpolation.
+
+#Scaling
+Viewing the original map
+```{r}
+ohio_sfc <-  st_geometry(oh_counties)
+ggplot(data = ohio_sfc) +
+  geom_sf() +
+  theme_minimal()
+```
+
+Scaling refers to enlarging or shrinking the map or object.
+It can be done globally or locally.
+
+Globally- It increases or decreases all coordinates values in relation to the global coordinates, while keeping all geometries topological relations intact.
+***It will change the size of the map but not necesarily the scaled map will follow the center of the original map or the geometries will be placed in its original location.
+```{r}
+ohio_scale1 <- ohio_sfc * 0.5
+ggplot(data = ohio_scale1) +
+  geom_sf() +
+  theme_minimal()
+
+ohio_scale2 <- ohio_sfc * 2
+ggplot(data = ohio_scale2) +
+  geom_sf() +
+  theme_minimal()
+```
+
+Locally- It treats geometries independently and requires points around which geometries are going to be scaled, e.g., centroids
+***It means it maintains the location or centers of the geometry while changinh the size of the map.
+```{r}
+ohio_scale <- ohio_sfc * 2
+ohio_centroid_sfc <- st_centroid(ohio_sfc)
+ohio_scale1 <- (ohio_sfc - ohio_centroid_sfc) * 0.5 + ohio_centroid_sfc
+ggplot(data = ohio_scale1) +
+  geom_sf() +
+  theme_minimal()
+
+ohio_scale2 <- (ohio_sfc - ohio_centroid_sfc) * 2 + ohio_centroid_sfc
+ggplot(data = ohio_scale2) +
+  geom_sf() +
+  theme_minimal()
+```
+
+Finally, the newly created geometries can replace the old ones with the st_set_geometry() function
+```{r}
+ohio_scale_sf = st_set_geometry(oh_counties, ohio_scale1)
+```
+
+#Shift
+```{r}
+tmap_mode("plot")
+
+counties_sfc<-st_geometry(oh_counties)
+tm_shape(counties_sfc) + tm_polygons()
+
+counties_shift <- counties_sfc + c(0, 100000)
+counties_shift_sf<-  st_set_geometry(oh_counties, counties_shift)
+tm_shape(counties_shift_sf) + tm_polygons()
+```
+#Rotate
+```{r}
+counties_centroid_sfc<- st_centroid(counties_sfc)
+
+rotation<- function(a) { r = a * pi / 180 
+ 
+matrix(c(cos(r), -sin(r), sin(r), cos(r)), nrow = 2, ncol = 2)}
+
+counties_rotate<- (counties_sfc - counties_centroid_sfc) * rotation (30) + counties_centroid_sfc
+
+tm_shape(counties_rotate) + tm_polygons()
+```
