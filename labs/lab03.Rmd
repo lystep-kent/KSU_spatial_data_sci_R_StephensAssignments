@@ -35,7 +35,7 @@ The data for this lab can be found on the US Census website.
 
 2. Second, scroll to the "Download Legal and Administrative Areas Geodatabases" section
 
-3. Click on "County" to download the county data for all of the US (the direct link is also here: https://www2.census.gov/geo/tiger/TIGER_DP/2020ACS/ACS_2020_5YR_COUNTY.gdb.zip)
+3. Click on "County" to download the county data for all of the US (the direct link is also here: https://www2.census.gov/geo/tiger/TIGER_DP/2020ACS/ACS_2020_5YR_COUNTY.gdb.zip). Note, the data are approximately 200 MB in size, so be aware of any connection or storage issues prior to downloading the file.
 
 
 ## Introduction
@@ -69,7 +69,7 @@ glimpse(d.all)
 
 ```
 
-Next, we're going to read the geodatabase again, but this time a tablular dataset containing age and sex data. Because the GEOID in this table and in the geometry file are different, we need to create a geoid in this table that will match.
+Next, we're going to read the geodatabase again, but this time a tablular dataset containing age and sex data. Because the GEOID in this table and in the geometry file are different, we need to create a geoid in this table that will match. We *could* do it as a separate step, but we're also able to modify the table as we read it.
 ```{r read_tab, echo = T, message = t}
 
 
@@ -89,7 +89,7 @@ d.joined <- d.all %>% left_join(., d.x1, by = c("GEOID" = "fixed_geoid"))
 ```
 
 
-Again, the data are too large, so we need to creat a subset we can work with later. Let's use the GEOID to create a dataset with only those counties in Ohio Be sure to check the data type of GEOID.
+Again, the data are too large, so we need to creat a subset we can work with later. Let's use the GEOID to create a dataset with only those counties in Ohio. Be sure to check the data type of GEOID.
 
 ```{r make_subset, echo=TRUE, message = TRUE}
 
@@ -120,6 +120,8 @@ tmap::tm_shape(ohio.projected) + tm_polygons()
 
 # make the neighborhood
 nb <- spdep::poly2nb(ohio.projected, queen = TRUE)
+
+nb
 
 ```
 
@@ -229,7 +231,7 @@ moran.plot(ohio.projected$B01001e47, lw, zero.policy=TRUE, plot=TRUE)
 
 2. Describe in your own words: what is a spatially-lagged variable?
 
-3. How does your analysis in this lab (as simple as it is) diffr by how you have formalized W (e.g., space, neighbors) in two diﬀerent methods? How might it affect analysis?
+3. How does your analysis in this lab (as simple as it is) differ by how you have formalized W (e.g., space, neighbors) in two diﬀerent methods? How might it affect analysis?
 
 4. What does it mean if an observation falls in the “H-L” quadrant? Why might it be useful to detect such occurances?
 
