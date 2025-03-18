@@ -337,8 +337,8 @@ Finally, we're going to join the tabular and spatial data together.
 \end{Shaded}
 
 Again, the data are too large, so we need to creat a subset we can work
-with later. Let's use the GEOID to create a dataset with only those
-counties in Ohio. Be sure to check the data type of GEOID.
+with later. Let's use the state ID to create a dataset with only those
+counties in Ohio. Be sure to check the data type of state ID
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -438,10 +438,10 @@ polygon in the object, type:
 ## [1]  2 11 66 69 73 74 87
 \end{verbatim}
 
-Polygon 1 has 4 neighbors. The numbers represent the polygon IDs as
+Polygon 1 has seven neighbors. The numbers represent the polygon IDs as
 stored in the spatial object \texttt{ohio.projected}. Polygon 1 is
 associated with the County attribute name \texttt{"Hancock\ County"} and
-its four neighboring polygons are associated with the counties:
+its neighboring polygons are associated with the counties:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -622,14 +622,14 @@ The process to make a plot is relatively simple:
 \item
   Develop a contiguity-based spatial weights matrix of your choosing
   (i.e., rook or queen)
-\item
-  Row-standardize the W
-\item
-  Plot a histogram of the number of neighbors
-\item
-  Calculate the average number of neighbors
-\item
-  Make a Moran Plot
+
+  5.1. Row-standardize the W
+
+  5.2. Plot a histogram of the number of neighbors
+
+  5.3. Calculate the average number of neighbors
+
+  5.4. Make a Moran Plot
 \item
   Repeat \#5 (and 5.1 - 5.4) above with a W developed using the IDW
   method. You will need to investigate the \texttt{spdep} documentation
@@ -653,7 +653,7 @@ The process to make a plot is relatively simple:
   might it be useful to detect such occurances?
 \end{enumerate}
 
-\subsection{Bonus (+50 points)}\label{bonus-50-points}
+\subsection{Bonus (+30 points)}\label{bonus-30-points}
 
 B1. make another Moran plot, this time do so manually (use
 \texttt{geom\_point} from \texttt{ggplot}). You must label each quadrant

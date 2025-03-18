@@ -89,7 +89,7 @@ d.joined <- d.all %>% left_join(., d.x1, by = c("GEOID" = "fixed_geoid"))
 ```
 
 
-Again, the data are too large, so we need to creat a subset we can work with later. Let's use the GEOID to create a dataset with only those counties in Ohio. Be sure to check the data type of GEOID.
+Again, the data are too large, so we need to creat a subset we can work with later. Let's use the state ID to create a dataset with only those counties in Ohio. Be sure to check the data type of state ID
 
 ```{r make_subset, echo=TRUE, message = TRUE}
 
@@ -131,7 +131,7 @@ For each polygon in our polygon object, ```nb``` lists all neighboring polygons.
 nb[[1]]
 ```
 
-Polygon 1 has 4 neighbors. The numbers represent the polygon IDs as stored in the spatial object ```ohio.projected```. Polygon 1 is associated with the County attribute name `"Hancock County"` and its four neighboring polygons are associated with the counties:
+Polygon 1 has seven neighbors. The numbers represent the polygon IDs as stored in the spatial object ```ohio.projected```. Polygon 1 is associated with the County attribute name `"Hancock County"` and its  neighboring polygons are associated with the counties:
 
 ```{r check names, echo = TRUE, message = TRUE}
 ohio.projected$NAMELSAD[1] # county in index 1
@@ -214,13 +214,13 @@ moran.plot(ohio.projected$B01001e47, lw, zero.policy=TRUE, plot=TRUE)
 
 5. Develop a contiguity-based spatial weights matrix of your choosing (i.e., rook or queen)
 
-  1. Row-standardize the W
+    5.1. Row-standardize the W
+    
+    5.2. Plot a histogram of the number of neighbors
   
-  2. Plot a histogram of the number of neighbors
-
-  3. Calculate the average number of neighbors
-
-  4. Make a Moran Plot
+    5.3. Calculate the average number of neighbors
+  
+    5.4. Make a Moran Plot
 
 6. Repeat #5 (and 5.1 - 5.4) above with a W developed using the IDW method. You will need to investigate the `spdep` documentation to find the correct method/function.
 
@@ -236,7 +236,7 @@ moran.plot(ohio.projected$B01001e47, lw, zero.policy=TRUE, plot=TRUE)
 4. What does it mean if an observation falls in the “H-L” quadrant? Why might it be useful to detect such occurances?
 
 
-## Bonus (+50 points)
+## Bonus (+30 points)
 
 B1. make another Moran plot, this time do so manually (use `geom_point` from `ggplot`). You must label each quadrant with HH, HL, LL, and LH, respectively. You should also use color and/or shape to denote whether an observation is statistically significant. Tip, you can find the data you want using the ```moran.plot``` function, but you'll have to alter the function call and read some documentation.
 
