@@ -1,5 +1,5 @@
 ---
-title: "Week 11 in-class activities"
+title: "Week 12 in-class activities"
 output:
   html_document:
     df_print: paged
@@ -40,7 +40,7 @@ terra::nrow(myras)
 terra::ncell(myras)
 
 
-# to demonstrate that arithmetic works
+# to demonstrate rows * columns = cells
 ncol(myras) * nrow(myras) == ncell(myras)
 
 ```
@@ -67,7 +67,7 @@ myras[132, 164]
 ### Two questions:
 
 1. How is "single indexing" different than row, column indexing?
-2. For row, column indexing, what other information is useful/required to know what you're doing?
+2. For (row, column) indexing, what other information is useful/required to know what you're doing?
 
 
 
@@ -104,6 +104,16 @@ terra::freq(myras) %>%
 Better?
 
 
+Why not just use a histogram?
+
+```{r}
+terra::freq(myras) %>%
+  dplyr::filter(value < 252) %>% 
+  ggplot(., aes(x = value)) +
+  geom_histogram()
+```
+Why NOT just use a histogram?
+
 ### Another way to "get" cell values
 ```{r}
 myras %>% terra::values(.) %>%
@@ -113,25 +123,29 @@ Perhaps not the most useful for printing to the console, but does demonstrate ho
 
 ## Raster aggregation
 
-### Why might we want to change the resolution of a raster?
+### What are some possible reasons we might want to change the resolution of a raster?
 
 Let's break down the code
 ```{r}
 terra::aggregate(myras, 2, fun = max)
 ```
+
 What happened?
 
 
 
 More obvious comparisons
+
 ```{r}
 terra::aggregate(myras, 2, fun = max) %>% plot()
 terra::aggregate(myras, 5, fun = max) %>% plot()
 ```
+
 Interpret the results. How do they differ in spatial scale, generalization, etc.?
 
 
 Different functions lead to different results
+
 ```{r}
 raster::aggregate(myras, 5, fun = max) %>% plot()
 raster::aggregate(myras, 5, fun = mean) %>% plot()
@@ -281,14 +295,14 @@ transform_champlain_olci <- function(x){
   10**(((3.0 / 250.0) * x) - 4.2)
 }
 
-myras.ci <- validRaster %>% transform_champlain_olci
+myras.ci <- validRaster %>% transform_champlain_olci()
 plot(myras.ci)
 ```
 
 ## Focal operations
 
 - Focal operations take into account a central (focal) cell and  neighbors
-- The neighborhood (also named kernel, filter, or moving window) can be any size/shape, but typically 3x3 grid
+- The neighborhood (also named kernel, filter, or moving window) can be any size/shape, but commonly a 3x3 grid
 - operation applies aggregation function to all cells within the specified neighborhood
 - function output is the new value for the the central cell, and moves on to the next central cell
 
@@ -346,7 +360,7 @@ myras.ci %>% terra::values() %>% mean(na.rm = T)
 
 # Your task with the remaining time
 
-Tell me how large the cyanobacteria bloom is in this image. I have shown you everything you need to know
+Tell me how large the cyanobacteria bloom is in `myras`. I have shown you everything you need to know
 
 1. Think through the problem CONCEPTUALLY
 2. THEN once you have the process figured out, write the code
