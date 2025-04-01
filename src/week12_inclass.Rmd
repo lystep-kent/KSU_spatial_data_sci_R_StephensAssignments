@@ -81,7 +81,7 @@ terra::freq(myras)
 What's the output???
 
 
-### Let's use it to make a quick histogram
+### Let's plot the distribution of values
 
 
 ```{r}
@@ -104,7 +104,7 @@ terra::freq(myras) %>%
 Better?
 
 
-Why not just use a histogram?
+Why not just use an actual histogram?
 
 ```{r}
 terra::freq(myras) %>%
@@ -112,7 +112,7 @@ terra::freq(myras) %>%
   ggplot(., aes(x = value)) +
   geom_histogram()
 ```
-Why NOT just use a histogram?
+So, why NOT just use a histogram?
 
 ### Another way to "get" cell values
 ```{r}
