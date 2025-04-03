@@ -1,0 +1,120 @@
+---
+title: "Lab3"
+author: "Lydia Stephens"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Required
+##Packages
+```{r}
+library(spdep)
+library(sf)
+library(tidyverse)
+library(tmap)
+```
+##Data
+```{r}
+data <-  sf::read_sf("./ACS_2020_5YR_COUNTY.gdb", layer = "ACS_2020_5YR_COUNTY")
+glimpse(data)
+
+datable <- sf::read_sf("./ACS_2020_5YR_COUNTY.gdb", layer = "X01_AGE_AND_SEX") %>%
+ mutate(fixed_geoid = str_sub(GEOID, start = 8, end =-1))
+
+datajoin <- data %>% left_join(., datable, by = c("GEOID" = "fixed_geoid"))
+
+
+```
+#Task 1
+Create a subset of 4-7 states and save them in a shapefile
+```{r}
+states <- sf::read_sf("./data/statesub.shp")
+
+```
+#Task 2
+Choose a variable and normalize if necessary
+```{r}
+states <- states %>% mutate(under5 = ((B01001e3 + B01001e27)/B01001e1), count5 = (B01001e3 + B01001e27))
+```
+Males and Females under 5 years old normalized by total 'sex by age' population
+#Task 3
+Histogram of chosen variable
+```{r}
+states %>% 
+ggplot(., aes(x = under5, na.rm = TRUE)) +
+geom_histogram() +
+labs(title = "Distribution of Children Under 5 Across U.S. Northwest Counties",
+x = "Proportion of Population Under 5",
+y = "Frequency") 
+```
+#Task 4
+Choropleth map of chosen variable
+```{r}
+tmap_mode("view")
+tm_shape(states) +
+  tm_polygons("under5", popup.vars = c("Number_Under_5: " = "count5", "Population: " = "B01001e1", id = "NAMELSA"), title = "Proportion of Population Under 5") +
+tm_layout(title = "Distribution of Children Under 5 Across the Northwest U.S.")
+```
+#Task 5
+Contiguous spatial weights matrix (rook or queen)
+##5.1
+Row-standardize the W
+```{r}
+state.projected <- states %>% sf::st_transform(., "ESRI:102010")
+
+neigh <- spdep::poly2nb(state.projected, queen = TRUE)
+
+rowstand <- nb2listw(neigh, style="W", zero.policy=TRUE)
+
+```
+##5.2
+Histogram of # of neighbors
+```{r}
+neighbors <- attr(rowstand$weights,"comp")$d
+hist(neighbors)
+```
+##5.3
+Calculate average # of neighbors
+```{r}
+AU5.lag <- lag.listw(rowstand, state.projected$under5)
+AU5.lag
+```
+##5.4
+Make a Moran Plot
+```{r}
+moran.test(state.projected$under5, rowstand)
+moran.plot(state.projected$under5, rowstand, zero.policy=TRUE, plot=TRUE)
+```
+#Task 6
+Contiguous spatial weights matrix using IDW method (spdep)
+```{r}
+centroids <- st_centroid(states)
+distneigh <- knn2nb(knearneigh(centroids, k=5))
+id.neigh <- nb2listwdist(distneigh, centroids, style="W", type = "idw",
+ alpha = 2, zero.policy = TRUE)
+
+distneighbors <- attr(id.neigh$weights,"comp")$d
+hist(distneighbors)
+
+distAU5.lag <- lag.listw(id.neigh, state.projected$under5)
+distAU5.lag
+
+ moran.test(state.projected$under5, id.neigh)
+ 
+ moran.plot(state.projected$under5, id.neigh, zero.policy=TRUE, plot=TRUE)
+```
+#Questions
+##1 How is Moran's I calculated?
+Moran's I is calculated by comparing neighbors and their variable values (e.g. proportion under 5). If neighbors are not similar to each other, it produces a number closer to -1, as there would be independent dispersion. On the other hand, if values cluster together, it produces a number closer to +1. If the values of the matrix were random (i.e. neither highly dispersed or clustered), the value would be 0.
+
+##2 What is a spatially-lagged variable?
+Spatially lagged variables are variables in spatial correlation models that are influenced by their neighbors. This means that polygons/points that are nearby each other are likely to have more similar values.
+##3 How does your lab analysis vary across W formalization methods?
+Using a k value of 5, which was similar to the average number of contiguous numbers, the Moran test results were extremely similar, with the only noticeable difference being a slightly larger range in the IDW method. Where the two methods differed was in neighbor distribution. The contiguous queen method resulted in an average of ~5 neighbors with a fairly normal distribution. The IDW method also peaked ~5 neighbors, but there was a wide spread of values. This may contribute to false results as points with high numbers of neighbors are likely going to cause clustering or dispersal based on their value.
+##4 What does it mean if an observation falls in the "H-L" quadrant and why is it important to detect?
+
+Outliers where they have a higher value than their surrounding neighbors. These outliers are important to detect because it can indicate a large disparity that needs to be addressed (e.g. natural disaster risk or hazardous waste exposure).
