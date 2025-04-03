@@ -37,7 +37,7 @@
 </code></pre>
 <p>Here you will find:</p>
 <ol>
-<li>weekly composites of cyanobacteria blooms in Lake Erie</li>
+<li>raster images of weekly composites of cyanobacteria blooms in Lake Erie</li>
 <li>a set of shapefiles representing areas of interest within Lake Erie</li>
 <li>a metadata file</li>
 </ol>
@@ -47,7 +47,7 @@
 <ol>
 <li>Write a function that takes a raster image and calculates the total size of the cyanobacteria blooms</li>
 <li>Create a binary raster that shows where cyanobacteria were present in the Sept 20-26th image, but NOT in the August 16-22nd image.</li>
-<li>Using the areas of interest, for which dates was the bloom in Sandusky Bay the &quot;worst&quot;? I leave you define &quot;worst&quot;</li>
+<li>Using the areas of interest, for which dates was the bloom in Sandusky Bay the &quot;worst&quot;? I leave you to define &quot;worst&quot;</li>
 <li>Using raster algebra and a local operation, write a function that transforms the raster from its original (DN) values to the index values.</li>
 <li>What combination of area-of-interest AND date(s) did a bloom take up the greatest portion of that area-of-interest. Bonus points if you write a script/function(s) to automate</li>
 </ol>
@@ -56,7 +56,7 @@
 <h1 id="some-tips">Some tips:</h1>
 <ul>
 <li>AS ALWAYS, think about the general process(es) before starting to write code</li>
-<li>Check the data, the metadata</li>
+<li>Rxplore the data, check the metadata</li>
 <li>Rely on Tuesday's notebook, your readings, and other resources we've used this semester</li>
 <li><code>terra::crop()</code> will likely prove useful, but understand what vector data structures you'll need</li>
 <li>in some spatial operations, it might be easier to do overlay analyses if you convert raster cells to points (but not always)</li>
