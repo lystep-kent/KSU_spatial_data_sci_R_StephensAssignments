@@ -6,7 +6,7 @@ output:
    pdf_document: 
       template: my_template.tex
       keep_tex: true
-my_subtitle: "GEOG 491/891"
+my_subtitle: "Env Analysis in R"
 fancy: true
 geometry: margin=1in
 latex_engine: pdflatex
@@ -31,25 +31,29 @@ This lab is much more free-form than previous assignments. You will be completin
 
 ## Your tasks
 
-1. Using the same descriptions as the in-class frankenmap, create a map that follows "good" cartographic principles. I have included the instructions below for reference.
+1. Using the same descriptions as the in-class frankenmap, create a map that follows "good" cartographic principles. I have included the instructions below for reference. The data can be found in: ```./data/static_mapping/```
 
   Original description:
 
-- State data frame:
-  - Nebraska counties, symbolized (filled) by some variable of interest
-  - Borders between counties symbolized using something other than the defaults
-  - A scale bar
+### Ohio scale
+1. Ohio counties, symbolized (filled) by some variable of interest. You will need to use a tabular join (`left_join()`, most likely) between spatial and tabular data
+2. Borders symbolized using NON-DEFAULT symbols
+3. A scale bar
 
-- County data frame:
-  - Municipal boundaries within Lancaster County, with labels for names
-  - State parks in Lancaster County, symbolized using a non-default symbol
-  - 303d streams in Lancaster County, symbolized differently by "impairment"
-  - Use the DEM to plot elevation behind a semi-transparent Lancaster County (I have placed a new DEM in the repo's data folder)
+### Local scale
+1. Municipal boundaries within Portage AND Summit counties, with labels for names (see `oh_places.gpkg`)
+2. Parks within Portage AND Summit counties, symbolized using different shades of green according to the park TYPE
+3. Linear water features (streams, rivers) in Portage AND Summit counties. Symbols should indicate which linear features intersect a park
 
-- Putting it together
-  - Put the state map as an inset to the county map
-  - A north arrow
-  - A title
+## Putting it together
+1. Use the provided DEM to plot elevation behind a semi-transparent Portage and Summit counties
+2. A north arrow
+3. Code to make Group 1's code (all of Ohio) an inset into Group 2's Portage + Summit counties study area
+4. A title
+
+### One NOTE:
+
+*EVERYTHING NEEDS DONE PROGRAMMATICALLY REFERENCING DATA LOCATIONS IN THE REPO*
 
 
 2. Make a second static map of your choosing. You may choose any spatial extent, domain, or technique. I'm looking for creativity, good coding practices (including comments), and for you to demonstrate independent thinking. There are minor restrictions you must follow:
