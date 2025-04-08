@@ -8,7 +8,7 @@ output: html_document
 
 # This week is semi-experimental
 
-- Readings/demos: Lovelace, Ch 8 (https://geocompr.robinlovelace.net/adv-map.html#static-maps)
+- Readings/demos: Lovelace, Ch 9 (https://geocompr.robinlovelace.net/adv-map.html#static-maps)
 - Walks through:
   - Fills/shades
   - Borders
@@ -47,12 +47,12 @@ nz_elev = rast(system.file("raster/nz_elev.tif", package = "spDataLarge"))
 
 
 
-
 `tmap` uses a similar "grammar of graphics" as `ggplot2`
 
 simple fill
 
 ```{r}
+# nz data comes from spData package
 
 tm_shape(nz) +
   tm_fill() 
@@ -78,7 +78,7 @@ tm_shape(nz) +
 But keep in mind - ORDER MATTERS!!!
 
 ```{r}
-
+# flip the order to illustrate order matters
 tm_shape(nz) +
   tm_borders() +
     tm_fill()
@@ -108,6 +108,8 @@ It can be useful to "reuse" the base of a map and add different layers.
 WAIT - Let's first break down this code
 
 ```{r}
+# reuse map_nz_base from above
+
 map_nz_red_bubbles = map_nz_base +
   tm_shape(nz_height) + tm_bubbles(size = "elevation", 
                                    fill = "darkred", 
@@ -121,8 +123,8 @@ map_nz_red_bubbles
 
 Things to note:
 1. dots vs. bubbles
-2. fill vs. col (read the documentation)
-3. variables used to change symbology are inside "": ```size = elevation```
+2. `fill` vs. `col` (read the documentation)
+3. variables used to change symbology are put inside "": ```size = "elevation"```
 
 
 
@@ -138,7 +140,13 @@ map <- base + layer_1 + layer_2 + aesthetic + function + layer_3
 
 ```{r}
 tm_shape(nz) + tm_polygons(fill = "Median_income")
+
+
 ```
+
+Wait... how did it determine the breaks in the data to create the choropleth? 
+
+DON'T MAKE ASSUMPTIONS FOR THE DEFAULT BEHAIVOR!!!
 
 Let's create a new object that represents NZ's territorial waters. Who want to help break down the code?
 
@@ -148,7 +156,7 @@ nz_water = st_union(nz) %>%
      st_cast(to = "LINESTRING")
 ```
 
-How would we know what units the `22200` is in the buffer function?
+How would we know what units the `22200` is in for the buffer function?
 
 Plot it to show our work
 
@@ -207,7 +215,7 @@ Any issues here?
 
 ## TONS more options
 
-Let's go through one-by-one
+Let's go through one-by-one. What are your expectations fior each???
 
 ```{r}
 ma1 = tm_shape(nz) + tm_polygons(fill = "red")
@@ -362,7 +370,7 @@ There is a LOT more detail in your readings for today, which we're going to leve
 ## BEFORE YOU START. WHAT ARE YOUR GENERAL STEPS???
 
 
-You have _________ minutes
+You have until ______________________:
 
 
 ## Now that we have the components, what's next?
