@@ -64,8 +64,10 @@ This lab is much more free-form than previous assignments. You will be completin
 
 ## Questions:
 
-1. Describe your choices in making map 1
+1. Describe and justify your choices in making map 1. 
 
-2. Describe your choices in making map 2. Include why you chose the problem and where you obtained your data. Finally, your map is a communication piece. What was the intent of your communication and do you feel as though you achieved your goal?
+2. Compare the cartographic decisions you made in your *individual* process to the decisions made *by the groups in-class*. Make direct reference to how your group made decisions in-class, and how those decisions impacted the final "frankenmap".
 
-3. What did you learn?
+3. Describe your choices in making map 2 (the one of your choosing). Include why you chose the problem and where you obtained your data. Finally, your map is a communication piece. What was the intent of your communication and do you feel as though you achieved your goal?
+
+4. With respect to `tmap` and the process of creating static maps, what did you learn?
