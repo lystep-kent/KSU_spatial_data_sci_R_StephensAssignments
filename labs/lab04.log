@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.6)  10 APR 2025 08:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.1.6)  10 APR 2025 11:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -459,7 +459,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,11n,79p,396b,530s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/pjbitterman/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on lab04.pdf (2 pages, 113976 bytes).
+Output written on lab04.pdf (2 pages, 113974 bytes).
 PDF statistics:
  107 PDF objects out of 1000 (max. 8388607)
  94 compressed objects within 1 object stream

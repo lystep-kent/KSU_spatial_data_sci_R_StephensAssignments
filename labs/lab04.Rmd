@@ -48,7 +48,7 @@ This lab is much more free-form than previous assignments. You will be completin
 ## Putting it together
 1. Use the provided DEM to plot elevation behind a semi-transparent Portage and Summit counties
 2. A north arrow
-3. Code to make Group 1's code (all of Ohio) an inset into Group 2's Portage + Summit counties study area
+3. Code to make the Ohio-scale map an inset into the map detailing the Portage + Summit counties study area
 4. A title
 
 ### One NOTE:
