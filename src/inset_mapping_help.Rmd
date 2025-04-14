@@ -54,7 +54,8 @@ oh_height_map = tm_shape(myras, bbox = oh_region) +
 ```{r}
 oh_map = tm_shape(allohio) + tm_polygons() + 
   tm_shape(oh_region) + tm_borders(lwd = 3) +
-  tm_layout(bg.color = "lightblue")
+  tm_layout(bg.color = "lightblue") +
+  tm_scalebar(position = c("left", "bottom"))
 ```
 
 ```{r}
