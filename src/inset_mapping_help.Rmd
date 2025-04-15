@@ -76,15 +76,10 @@ ins_dim = norm_dim(sa)
 main_vp = viewport(width = main_dim[1], height = main_dim[2])
 ```
 
-```{r}
-ins_vp = viewport(width = ins_dim[1] * 0.5, height = ins_dim[2] * 0.5,
-                  x = unit(1, "npc") - unit(0.5, "cm"), y = unit(0.5, "cm"),
-                  just = c("right", "bottom"))
-```
 
 ```{r}
-ins_vp = viewport(width = ins_dim[1] * 0.5, height = ins_dim[2] * 0.5,
-                  x = unit(1, "npc") - unit(0.5, "cm"), y = unit(0.5, "cm"),
+ins_vp = viewport(width = ins_dim[1] * 0.6, height = ins_dim[2] * 0.6,
+                  x = unit(1, "npc") - unit(0.6, "cm"), y = unit(0.1, "npc"),
                   just = c("right", "bottom"))
 ```
 

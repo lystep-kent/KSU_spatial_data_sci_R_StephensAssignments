@@ -18,8 +18,8 @@ Packages
 library(tidyverse)
 library(terra)
 library(sf)
-library(leaflet)
-library(leaflet.extras)
+library(leaflet) #new
+library(leaflet.extras) #new
 ```
 
 # Leaflet
@@ -200,7 +200,7 @@ What happened?
 
 ## Multiple layers
 
-(Note, there's a difference here)
+(Note, there's a difference here in calling various datasets)
 
 ```{r}
 m.both <- leaflet() %>%
@@ -240,7 +240,7 @@ m.both
 ### GROUP 1
 
 - Make a choropleth map of the population density of Ohio Counties. There should be no more than 7 classes
-- When the user "mouses over" a polygon, they should highlight, and a pop-up with the county name and population density should appear
+- When the user "mouses over" a polygon, a pop-up with the county name and population density should appear
 - Place a legend in the bottom-right corner
 
 #### Extra challenges: 
