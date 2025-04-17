@@ -127,7 +127,7 @@ bounds <- c(40.985289,-82.269470,41.887148,-80.863220)
 morel <- get_inat_obs(taxon_name = "Morchella", bounds = bounds, maxresults = 10000) %>% st_as_sf(., coords = c("longitude", "latitude"), crs = 4326)
 
 #Urban Areas According to ODOT
-urb <- sf::read_sf("../data/Adjusted Urban Areas.shp/REFER_URBAN_AREA.shp") %>% st_transform(., crs = 4326)
+urb <- sf::read_sf("../data/REFER_URBAN_AREA.shp") %>% st_transform(., crs = 4326)
 
 #tree canopy cover raster
 treecan <- rast("../data/nlcd.tiff") %>% terra::project(., "EPSG:4326")
