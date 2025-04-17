@@ -1,0 +1,174 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(sf)
+library(terra)
+library(tmap)
+library(spData)
+library(tidyverse)
+library(rinat)
+```
+
+
+
+```{r}
+
+cnty <- read_sf("../data/static_mapping/oh_counties.gpkg") %>%
+  dplyr::filter(NAME %in% c("Portage", "Summit"))
+
+
+ohio  <- read_sf("../data/static_mapping/oh_counties.gpkg")
+oh2020 <- read_csv("../data/static_mapping/oh_counties_DP2020.csv")
+oh2020 <- dplyr::filter(oh2020,name!="Ohio")
+joined.table <- left_join(counties, oh2020, by=c("GEOIDFQ"="geoid"))
+
+
+ohbox = st_bbox(cnty) %>%
+  st_as_sfc()
+```
+
+
+```{r}
+daras <- rast("../data/static_mapping/neoh_dem.tif") %>% 
+  terra::project(., "EPSG:4269") %>%
+  terra::crop(cnty)
+
+```
+
+#Main County Map
+```{r}
+
+parks <- read_sf("../data/static_mapping/oh_parks.gpkg") %>% na.omit(., FEATTYPE)
+
+parkcnty <- parks %>% st_transform(st_crs(cnty)) %>%
+  st_intersection(., cnty)
+
+
+oh_height_map = tm_shape(daras, bbox = ohbox) +
+tm_raster(col.scale = tm_scale_continuous(values = "BrBG"), col.legend = tm_legend(position = c(-.4,1), title = "Elevation")) +
+
+tm_shape(cnty) + 
+  tm_polygons(fill_alpha = .2) +
+  tm_text("NAME", size = 0.7, col = "black", shadow = TRUE) +
+  
+tm_shape(parkcnty) + 
+  tm_polygons(fill = "FEATTYPE", palette = "dark", fill_alpha = .5, title = "Park Type") +
+
+tm_scalebar(position = c(0,0)) +
+
+tm_compass(position = c(1, .3)) +
+  
+tm_layout(main.title = "Summit and Portage County Parks Displayed Over Ohio Elevation",
+            main.text.size = 6.2,
+            legend.outside = TRUE,
+            frame = FALSE,
+            bg.color = "white",
+            legend.title.size = .9,
+            legend.text.size = .7)
+
+```
+#All of Ohio inset
+```{r}
+oh_map = tm_shape(joined.table) +
+  tm_polygons(fill = "medianage",lty=5,lwd=5) +
+  tm_shape(ohbox) + tm_borders(lwd = 3, col = "red") +
+  tm_layout(bg.color = "white")
+# + tm_scalebar(position = c("left", "bottom"))
+```
+
+```{r}
+library(grid)
+norm_dim = function(obj){
+    bbox = st_bbox(obj)
+    width = bbox[["xmax"]] - bbox[["xmin"]]
+    height = bbox[["ymax"]] - bbox[["ymin"]]
+    w = width / max(width, height)
+    h = height / max(width, height)
+    return(unit(c(w, h), "snpc"))
+}
+main_dim = norm_dim(ohbox)
+ins_dim = norm_dim(cnty)
+```
+
+```{r}
+main_vp = viewport(width = main_dim[1], height = main_dim[2])
+```
+
+
+```{r}
+ins_vp = viewport(width = ins_dim[1] * 0.4, height = ins_dim[2] * 0.4,
+                  x = unit(1, "npc") - unit(5.255, "cm"), y = unit(.23, "npc"))
+                
+```
+
+```{r}
+grid.newpage()
+print(oh_height_map, vp = main_vp)
+pushViewport(main_vp)
+print(oh_map, vp = ins_vp)
+```
+
+
+
+
+
+#2 My map
+
+##Data
+```{r}
+
+#Morel sightings on iNaturalist
+bounds <- c(40.985289,-82.269470,41.887148,-80.863220)
+morel <- get_inat_obs(taxon_name = "Morchella", bounds = bounds, maxresults = 10000) %>% st_as_sf(., coords = c("longitude", "latitude"), crs = 4326)
+
+#Urban Areas According to ODOT
+urb <- sf::read_sf("../data/Adjusted Urban Areas.shp/REFER_URBAN_AREA.shp") %>% st_transform(., crs = 4326)
+
+#tree canopy cover raster
+treecan <- rast("../data/nlcd.tiff") %>% terra::project(., "EPSG:4326")
+
+
+```
+
+##Map
+```{r}
+morel_map <- 
+tm_shape(treecan) +
+  tm_raster("Layer_1", palette = "Greens", style = "fisher", 
+  title = "# of Trees", alpha = 0.8) +
+  tm_layout(bg.color = NA) +
+tm_shape(urb) +
+  tm_borders(col = "black", lwd = 1) +
+  tm_fill(col = "gray40", alpha = 0.1, legend.show = FALSE) +
+tm_shape(morel) +
+  tm_dots(col = "purple", size = 0.2, alpha = 0.6, 
+  title = "Morel Sightings") +
+  tm_layout(main.title = "Morel Sightings Throughout NE Ohio",
+            main.title.size = 1.2,
+            legend.outside = TRUE,
+            frame = FALSE,
+            bg.color = "white",
+            legend.title.size = 0.9,
+            legend.text.size = 0.7) +
+
+tm_compass(position = c("left", "top"), type = "arrow", size = 2)
+
+print(morel_map)
+```
+
+
+#Questions
+
+##1
+The original goal for map 1 was to pick a high contrast DEM color palette so that the green parks layer was still visible while having enough space for all of the required elements. I unfortunately encountered many issues with positioning elements of the map. I was not able to produce a complete map and had issues with the inset map as well as text positioning. I ran out of time to continue working on it, but I would like to chose a better color scheme and understand how to position static maps better.
+##2
+During the group process, our individual group simply tried to meet the minimum requirements and the final frankenmap design was left up to Dai who was the central laptop. The individual process ended up being similar, as pieces from the frankenmap as well as the sample code provided were pieced together to attempt to create a more comprehensible map. 
+##3
+I chose the data/map I did as an exploration of the data for my final project. I took the designated urban areas shape file from the Ohio Department of Transportation and overlayed a tree canopy raster (NLCD) and morel sighting data from iNaturalist. I once again ran out of time and did not design the final map as well as I had wanted. The design is distracting, but I do believe the map communicates that morels are most likely to be spotted in highly dense forests that have high human traffic with little urban development (i.e. CVNP). 
+##4
+This process has shown me that for static mapping in particular, more commercial products like ArcGIS may be more effective and easier to work with. I have not struggled with a process during this class as much as I have with this lab. The trial and error process was helpful for learning more syntax and common errors however.
