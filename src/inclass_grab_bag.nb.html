@@ -1752,6 +1752,8 @@ display: none;
 
 
 <!-- rnb-text-begin -->
+<div id="packages" class="section level1">
+<h1>Packages</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGAifQ== -->
@@ -1803,6 +1805,9 @@ Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="read-data" class="section level1">
+<h1>Read data</h1>
 <p>Read NLCD for northeast ohio</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
@@ -1849,15 +1854,18 @@ oh_tracts &lt;- vect(&quot;../data/ohio/oh_tracts_2020.gpkg&quot;) %&gt;%
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Test some zonal activities</p>
+</div>
+<div id="lets-get-some-raster-values" class="section level1">
+<h1>let’s get some raster values</h1>
+<p>Test some zonal statistics</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVzdCA8LSB0ZXJyYTo6em9uYWwobmVvaF9sdWxjLCBuZW9oX2NvdW50aWVzLCBmdW4gPSBcIm5cIilcblxuYGBgIn0= -->
-<pre class="r"><code>test &lt;- terra::zonal(neoh_lulc, neoh_counties, fun = &quot;n&quot;)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG50ZXN0IDwtIHRlcnJhOjp6b25hbChuZW9oX2x1bGMsIG5lb2hfY291bnRpZXMsIGZ1biA9IFwibW9kZVwiKVxuYGBgIn0= -->
+<pre class="r"><code>
+test &lt;- terra::zonal(neoh_lulc, neoh_counties, fun = &quot;mode&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IFt6b25hbF0gVW5rbm93biBmdW5jdGlvbjogblxuIn0= -->
-<pre><code>Error: [zonal] Unknown function: n</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IFt6b25hbF0gVW5rbm93biBmdW5jdGlvbjogbW9kZVxuIn0= -->
+<pre><code>Error: [zonal] Unknown function: mode</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1874,7 +1882,8 @@ oh_tracts &lt;- vect(&quot;../data/ohio/oh_tracts_2020.gpkg&quot;) %&gt;%
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>What do we get?</p>
+<p>What do we get?. And… what’s with the tick marks around attribute
+#2?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmFsdWVzICU+JSBncm91cF9ieShJRCwgYE5MQ0QgTGFuZCBDb3ZlciBDbGFzc2ApICU+JVxuICBzdW1tYXJpc2UobmNlbGxzID0gbigpKVxuXG5gYGAifQ== -->
@@ -1894,12 +1903,18 @@ oh_tracts &lt;- vect(&quot;../data/ohio/oh_tracts_2020.gpkg&quot;) %&gt;%
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>I would call the format of these data a “long data frame”… why?</p>
+<div id="lets-make-a-plan-or-two" class="section level2">
+<h2>Let’s make a plan (or two):</h2>
+<p>Let’s find the</p>
 <p>look up table to figure out which counties are which</p>
 <p>eventually join back to the vector</p>
 <p>Later we’ll do pivot longer and pivot wider</p>
 <!-- rnb-text-end -->
+</div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW4tY2xhc3Mgem9uYWwgYW5kIG90aGVyIHN0dWZmIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpgYGB7cn0KbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkodGVycmEpCmxpYnJhcnkodGlkeXRlcnJhKQpsaWJyYXJ5KHNmKQpsaWJyYXJ5KG1hcHZpZXcpCgpgYGAKClJlYWQgTkxDRCBmb3Igbm9ydGhlYXN0IG9oaW8KCmBgYHtyfQoKbmVvaF9sdWxjIDwtIHRlcnJhOjpyYXN0KCIuLi9kYXRhL29oaW8vbmVvaF9ubGNkLnRpZiIpCgojIHN1bW1hcnkKdGVycmE6OnN1bW1hcnkobmVvaF9sdWxjKQoKCiMgcGxvdCBpdAp0ZXJyYTo6cGxvdChuZW9oX2x1bGMpCgpgYGAKVmVjdG9yIGRhdGEKYGBge3J9CiMgdXNpbmcgdGVycmEgdmVjdG9yIGNsYXNzZXMgdG8gbWFrZSBsYXRlciBvcGVyYXRpb25zIGVhc2llcgojIHByb2plY3QgdG8gdGhlIGNycyBvZiB0aGUgcmFzdGVyIHNvIHdlIGRvbid0IG5lZWQgdG8gcmVzYW1wbGUgcmFzdGVyICh3aGljaCB0YWtlcyBmb3JldmVyKQpuZW9oX2NvdW50aWVzIDwtIHZlY3QoIi4uL2RhdGEvb2hpby9uZW9oX2NvdW50aWVzLmdwa2ciKSAlPiUKICB0ZXJyYTo6cHJvamVjdCguLCBjcnMobmVvaF9sdWxjKSkKCm9oX3RyYWN0cyA8LSB2ZWN0KCIuLi9kYXRhL29oaW8vb2hfdHJhY3RzXzIwMjAuZ3BrZyIpICU+JQogIHRlcnJhOjpwcm9qZWN0KC4sIGNycyhuZW9oX2x1bGMpKQoKYGBgCgoKVGVzdCBzb21lIHpvbmFsIGFjdGl2aXRpZXMKYGBge3J9Cgp0ZXN0IDwtIHRlcnJhOjp6b25hbChuZW9oX2x1bGMsIG5lb2hfY291bnRpZXMpCgoKYGBgCgpXaGF0IGRvIHdlIGdldD8KCkxldCdzIHRyeSBzb21ldGhpbmcgYSBiaXQgbW9yZSBpbnRlbGxpZ2VudApgYGB7cn0KdmFsdWVzIDwtIGV4dHJhY3QobmVvaF9sdWxjLCBuZW9oX2NvdW50aWVzKQpgYGAKCldoYXQgZG8gd2UgZ2V0PwoKYGBge3J9CnZhbHVlcyAlPiUgZ3JvdXBfYnkoSUQsIGBOTENEIExhbmQgQ292ZXIgQ2xhc3NgKSAlPiUKICBzdW1tYXJpc2UobmNlbGxzID0gbigpKQpgYGAKCgoKbG9vayB1cCB0YWJsZSB0byBmaWd1cmUgb3V0IHdoaWNoIGNvdW50aWVzIGFyZSB3aGljaAoKZXZlbnR1YWxseSBqb2luIGJhY2sgdG8gdGhlIHZlY3RvcgoKCgoKTGF0ZXIgd2UnbGwgZG8gcGl2b3QgbG9uZ2VyIGFuZCBwaXZvdCB3aWRlcg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSW4tY2xhc3Mgem9uYWwgYW5kIG90aGVyIHN0dWZmIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCiMgUGFja2FnZXMKCmBgYHtyfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeSh0ZXJyYSkKbGlicmFyeSh0aWR5dGVycmEpCmxpYnJhcnkoc2YpCmxpYnJhcnkobWFwdmlldykKCmBgYAoKIyBSZWFkIGRhdGEKClJlYWQgTkxDRCBmb3Igbm9ydGhlYXN0IG9oaW8KCmBgYHtyfQoKbmVvaF9sdWxjIDwtIHRlcnJhOjpyYXN0KCIuLi9kYXRhL29oaW8vbmVvaF9ubGNkLnRpZiIpCgojIHN1bW1hcnkKdGVycmE6OnN1bW1hcnkobmVvaF9sdWxjKQoKCiMgcGxvdCBpdAp0ZXJyYTo6cGxvdChuZW9oX2x1bGMpCgpgYGAKVmVjdG9yIGRhdGEKYGBge3J9CiMgdXNpbmcgdGVycmEgdmVjdG9yIGNsYXNzZXMgdG8gbWFrZSBsYXRlciBvcGVyYXRpb25zIGVhc2llcgojIHByb2plY3QgdG8gdGhlIGNycyBvZiB0aGUgcmFzdGVyIHNvIHdlIGRvbid0IG5lZWQgdG8gcmVzYW1wbGUgcmFzdGVyICh3aGljaCB0YWtlcyBmb3JldmVyKQpuZW9oX2NvdW50aWVzIDwtIHZlY3QoIi4uL2RhdGEvb2hpby9uZW9oX2NvdW50aWVzLmdwa2ciKSAlPiUKICB0ZXJyYTo6cHJvamVjdCguLCBjcnMobmVvaF9sdWxjKSkKCm9oX3RyYWN0cyA8LSB2ZWN0KCIuLi9kYXRhL29oaW8vb2hfdHJhY3RzXzIwMjAuZ3BrZyIpICU+JQogIHRlcnJhOjpwcm9qZWN0KC4sIGNycyhuZW9oX2x1bGMpKQoKYGBgCgojIGxldCdzIGdldCBzb21lIHJhc3RlciB2YWx1ZXMKClRlc3Qgc29tZSB6b25hbCBzdGF0aXN0aWNzCmBgYHtyfQoKdGVzdCA8LSB0ZXJyYTo6em9uYWwobmVvaF9sdWxjLCBuZW9oX2NvdW50aWVzKQoKCmBgYAoKV2hhdCBkbyB3ZSBnZXQ/CgpMZXQncyB0cnkgc29tZXRoaW5nIGEgYml0IG1vcmUgaW50ZWxsaWdlbnQKYGBge3J9CnZhbHVlcyA8LSBleHRyYWN0KG5lb2hfbHVsYywgbmVvaF9jb3VudGllcykKCnZhbHVlcwpgYGAKCldoYXQgZG8gd2UgZ2V0Py4gQW5kLi4uIHdoYXQncyB3aXRoIHRoZSB0aWNrIG1hcmtzIGFyb3VuZCBhdHRyaWJ1dGUgIzI/CgpgYGB7cn0KdmFsdWVzICU+JSBncm91cF9ieShJRCwgYE5MQ0QgTGFuZCBDb3ZlciBDbGFzc2ApICU+JQogIHN1bW1hcmlzZShuY2VsbHMgPSBuKCkpCmBgYApJIHdvdWxkIGNhbGwgdGhlIGZvcm1hdCBvZiB0aGVzZSBkYXRhIGEgImxvbmcgZGF0YSBmcmFtZSIuLi4gd2h5PwoKCiMjIExldCdzIG1ha2UgYSBwbGFuIChvciB0d28pOgoKTGV0J3MgZmluZCB0aGUgCgoKCgoKCgoKCgoKCgpsb29rIHVwIHRhYmxlIHRvIGZpZ3VyZSBvdXQgd2hpY2ggY291bnRpZXMgYXJlIHdoaWNoCgpldmVudHVhbGx5IGpvaW4gYmFjayB0byB0aGUgdmVjdG9yCgoKCgpMYXRlciB3ZSdsbCBkbyBwaXZvdCBsb25nZXIgYW5kIHBpdm90IHdpZGVy</div>
 
 
 
