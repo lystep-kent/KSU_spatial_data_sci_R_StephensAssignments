@@ -18,11 +18,14 @@ library(tidyverse)
 library(terra)
 library(tidyterra)
 library(sf)
-library(mapview)
+library(mapview) # likely new to you
 
 ```
 
 # Read data
+
+
+## Raster data
 
 Read NLCD for northeast ohio
 
@@ -38,7 +41,27 @@ terra::summary(neoh_lulc)
 terra::plot(neoh_lulc)
 
 ```
-Vector data
+
+Mapview is a quick way to plot data as well. 
+
+```{r}
+#mapview(neoh_lulc)
+```
+
+But it doesn't love giant raster data
+
+
+We COULD resample to a coarser resolution, but that is problematic.
+
+```{r}
+neoh_lulc %>% terra::aggregate(., 3, fun = "modal") %>% mapview(.)
+```
+
+What does the above code do? How would you know?
+
+
+
+## Vector data
 ```{r}
 # using terra vector classes to make later operations easier
 # project to the crs of the raster so we don't need to resample raster (which takes forever)
@@ -48,7 +71,16 @@ neoh_counties <- vect("../data/ohio/neoh_counties.gpkg") %>%
 oh_tracts <- vect("../data/ohio/oh_tracts_2020.gpkg") %>%
   terra::project(., crs(neoh_lulc))
 
+mapview(neoh_counties) + mapview(oh_tracts)
+
 ```
+
+
+# TODAY'S PROBLEM
+
+Let's figure out the mix of land use within EACH county
+
+
 
 # let's get some raster values
 
@@ -67,6 +99,8 @@ What do we get?
 
 z.max <- terra::zonal(neoh_lulc, neoh_counties, fun = "max")
 
+z.max
+
 ```
 
 Useful? 
@@ -84,7 +118,7 @@ values <- extract(neoh_lulc, neoh_counties)
 values
 ```
 
-What do we get?. And... what's with the tick marks around attribute #2?
+What do we get? And... what's with the tick marks around attribute #2?
 
 ```{r}
 values %>% group_by(ID, `NLCD Land Cover Class`) %>%
@@ -217,10 +251,12 @@ df.forfract <- df.cells %>%
             tot_cells = max(tot_cells)) %>%
   mutate(frac_forest = forest_cells/tot_cells)
 
+df.forfract
+
 ```
 
 
-
+Make the data "wide"
 ```{r}
 # make the data "wide"
 
@@ -230,7 +266,10 @@ df.cells.w <- df.cells %>% pivot_wider(id_cols = ID,
                                        values_from = ncells)
 
 df.cells.w.calc <- df.cells.w %>%
-  mutate(., )
+  mutate(., ) # <- what might go in here???
+
+
+df.cells.w.calc
 
 
 ```
@@ -244,7 +283,7 @@ neoh_counties.fix <- neoh_counties %>%
   as_sf(.) %>% # don't need terra::vect anymore, so let's stop using it
   tidyterra::mutate(., simpleid = seq(1:nrow(.)))
   
-
+neoh_counties.fix
 ```
 
 
@@ -261,6 +300,7 @@ d.joined <- neoh_counties.fix %>% left_join(., df.cells.w, by = c("simpleid" = "
 
 d.joined.for <- d.joined %>% left_join(df.forfract, by = c("simpleid" = "ID"))
 
+d.joined.for
 
 ```
 
@@ -277,7 +317,7 @@ d.joined.for %>% mapview::mapView(zcol = "frac_forest")
 ## Can map other stuff too
 
 ```{r}
-mapView(neoh_lulc) + mapView(d.joined.for, zcol = "frac_forest")
+mapView(terra::aggregate(neoh_lulc, 3, fun = "modal")) + mapView(d.joined.for, zcol = "frac_forest")
 ```
 
 ...usually. This raster is too large. Not every package is equivalent
