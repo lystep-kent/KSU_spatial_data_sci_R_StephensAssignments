@@ -1,9 +1,9 @@
 ---
 title: "Grab-bag part 2"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 # Today's plan
@@ -43,6 +43,7 @@ terra::summary(neoh_lulc)
 
 ## Vector data
 
+
 ```{r}
 # using terra vector classes to make later operations easier
 # project to the crs of the raster so we don't need to resample raster (which takes forever)
@@ -51,6 +52,9 @@ neoh_counties <- vect("../data/ohio/neoh_counties.gpkg") %>%
 
 oh_tracts <- vect("../data/ohio/oh_tracts_2020.gpkg") %>%
   terra::project(., crs(neoh_lulc))
+
+mapview(oh_tracts)
+
 ```
 
 
@@ -61,10 +65,14 @@ portage <- neoh_counties %>% tidyterra::filter(NAME == "Portage")
 
 summit <- neoh_counties %>% tidyterra::filter(NAME == "Summit")
 
+# just for demonstration, some spatial sampling
+port.samples <- terra::spatSample(portage, size = 40, method = "random")
+port.buffs <- terra::buffer(port.samples, width = 400)
 
 # map them together (hence the union function)
 terra::union(portage, summit) %>%
-  mapview(., label = "NAME", zcol = "NAME")
+  mapview(., label = "NAME", zcol = "NAME") +
+  mapview(port.buffs) # add the buffers on top
 
 
 ```
@@ -99,8 +107,7 @@ dim(masked.portage)
 
 ```
 
-
-Let's try something else. How many NA values in each?
+Hmmm, they're the same? Let's try something else. How many NA values in each?
 
 
 ```{r}
@@ -114,7 +121,7 @@ masked.portage %>% values() %>% as_tibble() %>%
 
 So, what's the difference between a `crop` and a `mask`?
 
-What are some alternatives to using these approaches?
+What are some alternatives to using a mask?
 
 
 ## Landscape metrics
@@ -128,9 +135,11 @@ What's a landscape metric?
 - **Description:** Measures the number of patches per unit area. It provides insight into the fragmentation of a landscape—more patches generally indicate more fragmentation.
 - **Interpretation:** Higher values suggest a more fragmented or heterogeneous landscape.
 
+
 #### 2. **Edge Density (ED)**
 - **Description:** Total length of all edge segments in the landscape per unit area. This metric quantifies the amount of edge habitat, which can be important for certain species.
 - **Interpretation:** A high edge density often implies a fragmented landscape with many small patches or irregular shapes.
+
 
 #### 3. **Mean Patch Size (MPS)**
 - **Description:** The average area of patches within a given class or the whole landscape. It provides a simple summary of patch area characteristics.
@@ -147,7 +156,9 @@ What's a landscape metric?
 - **Interpretation:** Higher SHDI values indicate greater landscape heterogeneity and compositional complexity.
 
 
-Let's try a few
+### Let's try a few
+
+#### Density metrics
 
 ```{r}
 
@@ -169,7 +180,9 @@ landscapemetrics::lsm_c_ed(lulc.portage)
 
 ```
 
-Mean patch size. Anything different here?
+#### Mean patch size. 
+
+Notice anything different here?
 
 ```{r}
 # Mean patch size
@@ -182,7 +195,7 @@ landscapemetrics::lsm_c_area_mn(lulc.portage, directions = 8)
 
 ```
 
-Indices
+#### Indices
 
 ```{r}
 
@@ -202,6 +215,8 @@ landscapemetrics::lsm_c_lsi(lulc.portage)
 
 
 ## A bit of stats
+
+*TODAY'S TASK:*
 
 Let's figure out the landscape diversity of all Census tracts in Portage County
 
