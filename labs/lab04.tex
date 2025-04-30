@@ -71,7 +71,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead[LO, LE]{Lab 04}
-\fancyhead[RO, RE]{GEOG 491/891}
+\fancyhead[RO, RE]{Env Analysis in R}
 \makeatletter
 \renewcommand{\maketitle}{\bgroup\vspace*{-1cm}\setlength{\parindent}{0pt}
 \begin{flushleft}
@@ -86,19 +86,16 @@
 \begin{document}
 \maketitle
 
-\hypertarget{lab-04-making-static-maps}{%
-\section{Lab 04: Making static maps}\label{lab-04-making-static-maps}}
+\section{Lab 04: Making static maps}\label{lab-04-making-static-maps}
 
-\hypertarget{read-the-instructions-completely-before-starting-the-lab}{%
 \subsubsection{Read the instructions COMPLETELY before starting the
-lab}\label{read-the-instructions-completely-before-starting-the-lab}}
+lab}\label{read-the-instructions-completely-before-starting-the-lab}
 
 This lab builds on many of the discussions and exercises from class,
 including the ``frankenmap'' exercise from class.
 
-\hypertarget{formatting-your-submission}{%
 \subsubsection{Formatting your
-submission}\label{formatting-your-submission}}
+submission}\label{formatting-your-submission}
 
 This lab must be placed into a public repository on GitHub
 (www.github.com). Before the due date, submit \textbf{on Canvas} a link
@@ -111,8 +108,7 @@ repository at the time you submit your link to Canvas. They can be in a
 separate text file, or if you decide to use an RMarkdown document, you
 can answer them directly in the doc.
 
-\hypertarget{introduction}{%
-\subsection{Introduction}\label{introduction}}
+\subsection{Introduction}\label{introduction}
 
 This lab is much more free-form than previous assignments. You will be
 completing your own version of the in-class ``frankenmap'' using proper
@@ -121,8 +117,7 @@ find useful, including the relevant sections of the Lovelace chapter and
 online resources such as:
 \url{https://mgimond.github.io/Spatial/good-map-making-tips.html}
 
-\hypertarget{your-tasks}{%
-\subsection{Your tasks}\label{your-tasks}}
+\subsection{Your tasks}\label{your-tasks}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -130,56 +125,65 @@ online resources such as:
 \item
   Using the same descriptions as the in-class frankenmap, create a map
   that follows ``good'' cartographic principles. I have included the
-  instructions below for reference.
+  instructions below for reference. The data can be found in:
+  \texttt{./data/static\_mapping/}
 \end{enumerate}
 
 Original description:
 
-\begin{itemize}
+\subsubsection{Ohio scale}\label{ohio-scale}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  State data frame:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Nebraska counties, symbolized (filled) by some variable of interest
-  \item
-    Borders between counties symbolized using something other than the
-    defaults
-  \item
-    A scale bar
-  \end{itemize}
+  Ohio counties, symbolized (filled) by some variable of interest. You
+  will need to use a tabular join (\texttt{left\_join()}, most likely)
+  between spatial and tabular data
 \item
-  County data frame:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Municipal boundaries within Lancaster County, with labels for names
-  \item
-    State parks in Lancaster County, symbolized using a non-default
-    symbol
-  \item
-    303d streams in Lancaster County, symbolized differently by
-    ``impairment''
-  \item
-    Use the DEM to plot elevation behind a semi-transparent Lancaster
-    County (I have placed a new DEM in the repo's data folder)
-  \end{itemize}
+  Borders symbolized using NON-DEFAULT symbols
 \item
-  Putting it together
+  A scale bar
+\end{enumerate}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Put the state map as an inset to the county map
-  \item
-    A north arrow
-  \item
-    A title
-  \end{itemize}
-\end{itemize}
+\subsubsection{Local scale}\label{local-scale}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Municipal boundaries within Portage AND Summit counties, with labels
+  for names (see \texttt{oh\_places.gpkg})
+\item
+  Parks within Portage AND Summit counties, symbolized using different
+  shades of green according to the park TYPE
+\item
+  Linear water features (streams, rivers) in Portage AND Summit
+  counties. Symbols should indicate which linear features intersect a
+  park
+\end{enumerate}
+
+\subsection{Putting it together}\label{putting-it-together}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Use the provided DEM to plot elevation behind a semi-transparent
+  Portage and Summit counties
+\item
+  A north arrow
+\item
+  Code to make the Ohio-scale map an inset into the map detailing the
+  Portage + Summit counties study area
+\item
+  A title
+\end{enumerate}
+
+\subsubsection{One NOTE:}\label{one-note}
+
+\emph{EVERYTHING NEEDS DONE PROGRAMMATICALLY REFERENCING DATA LOCATIONS
+IN THE REPO}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -208,20 +212,25 @@ Original description:
   \end{enumerate}
 \end{enumerate}
 
-\hypertarget{questions}{%
-\subsection{Questions:}\label{questions}}
+\subsection{Questions:}\label{questions}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Describe your choices in making map 1
+  Describe and justify your choices in making map 1.
 \item
-  Describe your choices in making map 2. Include why you chose the
-  problem and where you obtained your data. Finally, your map is a
-  communication piece. What was the intent of your communication and do
-  you feel as though you achieved your goal?
+  Compare the cartographic decisions you made in your \emph{individual}
+  process to the decisions made \emph{by the groups in-class}. Make
+  direct reference to how your group made decisions in-class, and how
+  those decisions impacted the final ``frankenmap''.
 \item
-  What did you learn?
+  Describe your choices in making map 2 (the one of your choosing).
+  Include why you chose the problem and where you obtained your data.
+  Finally, your map is a communication piece. What was the intent of
+  your communication and do you feel as though you achieved your goal?
+\item
+  With respect to \texttt{tmap} and the process of creating static maps,
+  what did you learn?
 \end{enumerate}
 
 

@@ -6,7 +6,7 @@ output:
    pdf_document: 
       template: my_template.tex
       keep_tex: true
-my_subtitle: "GEOG 491/891"
+my_subtitle: "Env Analysis in R"
 fancy: true
 geometry: margin=1in
 latex_engine: pdflatex
@@ -31,11 +31,11 @@ This lab must be placed into a public repository on GitHub (www.github.com). Bef
 
 The data for this lab can be found on the US Census website. 
 
-1. First, go here: https://www.census.gov/geographies/mapping-files/2010/geo/tiger-data.html
+1. First, go here: https://www.census.gov/geographies/mapping-files/2020/geo/tiger-data.html
 
-2. Second, scroll to the "Demographic Profile 1 - ShapeFile Format" section
+2. Second, scroll to the "Download Legal and Administrative Areas Geodatabases" section
 
-3. Click on "Counties" to download the county data for all of the US (the direct link is also here: http://www2.census.gov/geo/tiger/TIGER2010DP1/County_2010Census_DP1.zip)
+3. Click on "County" to download the county data for all of the US (the direct link is also here: https://www2.census.gov/geo/tiger/TIGER_DP/2020ACS/ACS_2020_5YR_COUNTY.gdb.zip). Note, the data are approximately 200 MB in size, so be aware of any connection or storage issues prior to downloading the file.
 
 
 ## Introduction
@@ -53,27 +53,52 @@ library(tmap)
 ```
 
 
-Next, we load our data, look at it, then maybe plot it (the plot might take some time)
+Next, we load our data, look at it, then maybe plot it (the plot might take some time). This file is a geodatabase, a proprietary file format created by ESRI. Conveniently, `sf_read` can actually read geodatabases. However, we also have to know the layer name ahead of time.
+
+First, let's read the layer that has the geometry in this gdb file.
 
 ```{r data, echo=TRUE, message = TRUE}
-d.all <- sf::read_sf("../data/County_2010Census_DP1.shp")
+d.all <- sf::read_sf("../data/ACS_2020_5YR_COUNTY.gdb", layer = "ACS_2020_5YR_COUNTY")
 glimpse(d.all)
+
+
+
 
 #tmap::tm_shape(d.all) + tm_polygons() # commented out because 
 #it's a large dataset that takes a long time to plot
 
 ```
 
+Next, we're going to read the geodatabase again, but this time a tablular dataset containing age and sex data. Because the GEOID in this table and in the geometry file are different, we need to create a geoid in this table that will match. We *could* do it as a separate step, but we're also able to modify the table as we read it.
+```{r read_tab, echo = T, message = t}
 
-Again, the data are too large, so we need to creat a subset we can work with later. Let's use the GEOID10 to create a dataset with only those counties in Nebraska. Be sure to check the data type of GEOID.
+
+d.x1 <- sf::read_sf("../data/ACS_2020_5YR_COUNTY.gdb", layer = "X01_AGE_AND_SEX") %>%
+  mutate(fixed_geoid = str_sub(GEOID, start = 8, end = -1)) 
+# the -1 is a shortcut to tell R to go to the end of the string
+
+```
+
+Finally, we're going to join the tabular and spatial data together. 
+
+```{r join_data, echo = T, message = t}
+
+d.joined <- d.all %>% left_join(., d.x1, by = c("GEOID" = "fixed_geoid"))
+
+
+```
+
+
+Again, the data are too large, so we need to creat a subset we can work with later. Let's use the state ID to create a dataset with only those counties in Ohio. Be sure to check the data type of state ID
 
 ```{r make_subset, echo=TRUE, message = TRUE}
 
-# get just nebraska
-neb <- d.all %>% dplyr::filter(stringr::str_starts(GEOID10, "31"))
+# get just Ohio
+ohio <- d.joined %>% dplyr::filter(STATEFP == "39")
+
 
 # map it to verify
-tmap::tm_shape(neb) + tm_polygons()
+tmap::tm_shape(ohio) + tm_polygons()
 
 ```
 
@@ -85,16 +110,18 @@ Next, we'll formalize our space by creating neighbors, and thus, **W**
 ```{r make some neighbors, echo=TRUE, message = TRUE}
 
 # Check it first
-sf::st_crs(neb) 
+sf::st_crs(ohio) 
 
 # then reproject to north american equidistant conic
-neb.projected <- neb %>% sf::st_transform(., "ESRI:102010")
+ohio.projected <- ohio %>% sf::st_transform(., "ESRI:102010")
 
 # plot it again to make sure nothing broke
-tmap::tm_shape(neb.projected) + tm_polygons()
+tmap::tm_shape(ohio.projected) + tm_polygons()
 
 # make the neighborhood
-nb <- spdep::poly2nb(neb.projected, queen = TRUE)
+nb <- spdep::poly2nb(ohio.projected, queen = TRUE)
+
+nb
 
 ```
 
@@ -104,12 +131,12 @@ For each polygon in our polygon object, ```nb``` lists all neighboring polygons.
 nb[[1]]
 ```
 
-Polygon 1 has 4 neighbors. The numbers represent the polygon IDs as stored in the spatial object ```neb.projected```. Polygon 1 is associated with the County attribute name `"Burt County"` and its four neighboring polygons are associated with the counties:
+Polygon 1 has seven neighbors. The numbers represent the polygon IDs as stored in the spatial object ```ohio.projected```. Polygon 1 is associated with the County attribute name `"Hancock County"` and its  neighboring polygons are associated with the counties:
 
 ```{r check names, echo = TRUE, message = TRUE}
-neb.projected$NAMELSAD10[1] # county in index 1
+ohio.projected$NAMELSAD[1] # county in index 1
 
-nb[[1]] %>% neb.projected$NAMELSAD10[.] # and it's neighbors. 
+nb[[1]] %>% ohio.projected$NAMELSAD[.] # and it's neighbors. 
 # Note we're doing this programmatically step-by-step
 ```
 
@@ -142,12 +169,12 @@ hist(neighbors)
 ```
 
 
-Finally, we’ll compute the average neighbor population of Females > 65 years of age for each polygon. These values are often referred to as spatially lagged values. The following table shows the average neighboring F >65 values (stored in the F65.lag object) for each county.
+Finally, we’ll compute the average neighbor population of Females 75-79 years of age for each polygon. These values are often referred to as spatially lagged values. The following table shows the average neighboring F 75-79 values (stored in the F75.lag object) for each county. Note, I deterimined the correct attribute (B01001e47) by reading the metadata from the original Census Bureau link
 
 
 ```{r laggedVar, echo = TRUE, message = TRUE}
-F65.lag <- lag.listw(lw, neb.projected$DP0070003)
-F65.lag
+F75.lag <- lag.listw(lw, ohio.projected$B01001e47)
+F75.lag
 ```
 
 ### Computing Moran's I
@@ -156,69 +183,11 @@ F65.lag
 To get the Moran’s I value, simply use the moran.test function.
 
 ```{r morantest, echo = TRUE, message = TRUE}
-moran.test(neb.projected$DP0070003, lw)
+moran.test(ohio.projected$B01001e47, lw)
 ```
 
 Note that the p-value computed from the `moran.test` function is not computed from an MC simulation but **analytically** instead. This may not always prove to be the most accurate measure of significance. To test for significance using the MC simulation method instead, use the moran.mc function.
 
-
-```{r moranmc, echo = TRUE, message = TRUE}
-MC<- moran.mc(neb.projected$DP0070003, lw, nsim=999)
-
-# View results (including p-value)
-MC
-
-# Plot the distribution
-
-# Plot the distribution (note that this is a density plot instead of a histogram)
-plot(MC, main="", las=1)
-```
-
-What is being plotted in this density plot?
-
-### Defining **W** using a distance band
-
-Next, we will explore spatial autocorrelation as a function of distance bands.
-
-Instead of defining neighbors as contiguous polygons, we will define neighbors based on distances to **polygon centers**. We therefore need to extract the center of each polygon. The object `coords` stores all  pairs of coordinate values corresponding to polygon centroids. Note, we need to convert from an `sf` object to a `spatial` one for the `coordinates()` function to work.
-
-```{r make_coords, echo = TRUE, message = TRUE}
-coords <- neb.projected %>% as_Spatial() %>% coordinates()
-```
-
-Next, we will define the search radius to include all neighboring polygon centers within 50 km (or 50,000 meters)
-```{r calcdistbandneghbords, echo = TRUE, message = TRUE}
-s.dist  <-  dnearneigh(coords, 0, 50000)
-```
-
-The dnearneigh function takes on three parameters: 
-
-1. the coordinate values `coords`
-
-2. the radius for the inner radius of the annulus band
-
-3. and the radius for the outer annulus band. 
-
-In our example, the inner annulus radius is 0 which implies that all polygon centers up to 50km are considered neighbors.
-
-**Note that if we chose to restrict the neighbors to all polygon centers between 50 km and 100 km, for example, then we would define a search annulus (instead of a circle) as `dnearneigh(coords, 50000, 100000)`**
-
-Now that we defined our search circle, we need to identify all neighboring polygons for each polygon in the dataset.
-
-
-```{r calcnb, echo = TRUE, message = TRUE}
-lw <- nb2listw(s.dist, style="W",zero.policy=T) 
-
-#Run the MC simulation.
-MI  <-  moran.mc(neb.projected$DP0070003, lw, nsim=999, zero.policy=T) 
-
-#Plot the results.
-plot(MI, main="", las=1) 
-
-#Display p-value and other summary statistics.
-MI
-
-```
 
 ### Moran's plots
 
@@ -228,7 +197,7 @@ The process to make a plot is relatively simple:
 
 ```{r moranplot, echo = TRUE, message = TRUE}
 # use zero.policy = T because some polygons don't have neighbors
-moran.plot(neb.projected$DP0070003, lw, zero.policy=TRUE, plot=TRUE)
+moran.plot(ohio.projected$B01001e47, lw, zero.policy=TRUE, plot=TRUE)
 ```
 
 
@@ -245,13 +214,13 @@ moran.plot(neb.projected$DP0070003, lw, zero.policy=TRUE, plot=TRUE)
 
 5. Develop a contiguity-based spatial weights matrix of your choosing (i.e., rook or queen)
 
-  1. Row-standardize the W
+    5.1. Row-standardize the W
+    
+    5.2. Plot a histogram of the number of neighbors
   
-  2. Plot a histogram of the number of neighbors
-
-  3. Calculate the average number of neighbors
-
-  4. Make a Moran Plot
+    5.3. Calculate the average number of neighbors
+  
+    5.4. Make a Moran Plot
 
 6. Repeat #5 (and 5.1 - 5.4) above with a W developed using the IDW method. You will need to investigate the `spdep` documentation to find the correct method/function.
 
@@ -262,12 +231,12 @@ moran.plot(neb.projected$DP0070003, lw, zero.policy=TRUE, plot=TRUE)
 
 2. Describe in your own words: what is a spatially-lagged variable?
 
-3. How does your analysis in this lab (as simple as it is) diffr by how you have formalized W (e.g., space, neighbors) in two diﬀerent methods? How might it affect analysis?
+3. How does your analysis in this lab (as simple as it is) differ by how you have formalized W (e.g., space, neighbors) in two diﬀerent methods? How might it affect analysis?
 
 4. What does it mean if an observation falls in the “H-L” quadrant? Why might it be useful to detect such occurances?
 
 
-## Bonus (+50 points)
+## Bonus (+30 points)
 
 B1. make another Moran plot, this time do so manually (use `geom_point` from `ggplot`). You must label each quadrant with HH, HL, LL, and LH, respectively. You should also use color and/or shape to denote whether an observation is statistically significant. Tip, you can find the data you want using the ```moran.plot``` function, but you'll have to alter the function call and read some documentation.
 
