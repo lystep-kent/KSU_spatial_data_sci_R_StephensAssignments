@@ -1,0 +1,310 @@
+---
+title: "Lab 5"
+author: "Lydia Stephens"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#packages
+```{r}
+library(tidyverse)
+library(sf)
+library(spdep)
+library(stringr)
+library(matrixStats)
+library(leaflet)
+library(leaflet.extras)
+library(rinat) 
+library(sp)
+library(sdm) 
+library(usdm) 
+library(geodata)
+library(terra)
+library(RColorBrewer)
+library(classInt)
+```
+
+#Task 1: lab 2 remake
+
+##data
+```{r}
+
+cbwcounties <- sf::read_sf("./data/CBW/County_Boundaries.shp") %>%  
+   sf::st_transform(., "EPSG:4326") %>%
+  sf::st_make_valid()
+
+bmps <- read_csv("./data/CBW/BMPreport2016_landbmps.csv")
+
+
+bmpfix <- bmps %>% mutate(County = str_extract(Geography, "^[^,]+")) %>% distinct(County, .keep_all = TRUE)
+
+bmp.county <-left_join(cbwcounties, bmpfix, by = c("NAME10" = "County"))
+bmp.counties <- bmp.county %>% group_by(NAME10) %>% mutate(countytotal = sum(Cost, na.rm = T)) %>% dplyr::filter(TotalAmountCredited < 5000)
+
+
+```
+## Final Map
+```{r}
+
+bins <- classIntervals(bmp.counties$countytotal, n = 5, style = "equal")
+
+bmppal <- colorBin(
+  palette = c("#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"),
+  bins = bins$brks,
+  na.color = "lightgray")
+
+
+bmpmap <- 
+leaflet(bmp.counties) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolygons(
+    fillColor = ~bmppal(countytotal),
+    fillOpacity = 0.8,
+    color = "#444",
+    weight = 1,
+    label = ~paste0(NAME10, ": $", countytotal),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "bold"),
+      direction = "auto")) %>%
+  addLegend(
+    pal = bmppal,
+    values = ~countytotal,
+    title = "Total BMP Cost ($)",
+    position = "bottomright" )
+  
+bmpmap
+
+```
+
+#Task 2: lab 3
+##Setup
+```{r}
+data <-  sf::read_sf("./data/ACS_2020_5YR_COUNTY.gdb", layer = "ACS_2020_5YR_COUNTY")
+glimpse(data)
+
+datable <- sf::read_sf("./data/ACS_2020_5YR_COUNTY.gdb", layer = "X01_AGE_AND_SEX") %>%
+ mutate(fixed_geoid = str_sub(GEOID, start = 8, end =-1))
+
+datajoin <- data %>% left_join(., datable, by = c("GEOID" = "fixed_geoid"))
+
+
+```
+
+```{r}
+states <- datajoin %>% group_by(.,STATEFP) %>% dplyr::filter(., STATEFP %in% c("41","53","16","30"))
+
+```
+Choose a variable and normalize if necessary
+```{r}
+states <- states %>% mutate(under5 = ((B01001e3 + B01001e27)/B01001e1), count5 = (B01001e3 + B01001e27))
+```
+Males and Females under 5 years old normalized by total 'sex by age' population
+##Moran Plot
+Row-standardize the W
+```{r}
+state.projected <- states %>% sf::st_transform(., "EPSG:4326")
+
+neigh <- spdep::poly2nb(state.projected, queen = TRUE)
+
+rowstand <- nb2listw(neigh, style="W", zero.policy=TRUE)
+
+```
+
+Calculate average # of neighbors
+
+```{r}
+AU5.lag <- lag.listw(rowstand, state.projected$under5)
+AU5.lag
+```
+Make a Moran Plot
+```{r}
+moran.test(state.projected$under5, rowstand)
+mordat <- moran.plot(state.projected$under5, rowstand, zero.policy=TRUE, plot=TRUE, labels=TRUE, return_df=TRUE)
+```
+LISA Data
+```{r}
+neigh <- poly2nb(state.projected, queen = TRUE)
+lw <- nb2listw(neigh, style = "W", zero.policy = TRUE)
+
+
+local <- localmoran(state.projected$under5, lw, zero.policy = TRUE)
+
+state.projected <- state.projected %>%
+  ungroup(.) %>%
+  mutate(Ii = local[,1],
+         E.Ii = local[,2],
+         Var.Ii = local[,3],
+         Z.Ii = local[,4],
+         P.Ii = local[,5])
+
+
+
+state.projected <- state.projected %>%
+  mutate(quadrant = case_when(
+    Ii > 0 & state.projected$under5 > mean(state.projected$under5) ~ "High-High",
+    Ii > 0 & state.projected$under5 < mean(state.projected$under5) ~ "Low-Low",
+    Ii < 0 & state.projected$under5 > mean(state.projected$under5) ~ "High-Low",
+    Ii < 0 & state.projected$under5 < mean(state.projected$under5) ~ "Low-High",
+    TRUE ~ "Non-Significant"
+  ))
+
+```
+
+##Final Map
+```{r}
+palpal <- colorFactor(
+  palette = c("darkred", "darkblue", "darkorange", "darkgreen"),
+  levels = c("High-High", "Low-Low", "High-Low", "Low-High"))
+
+
+moranmap <- leaflet(state.projected) %>%
+  addProviderTiles("CartoDB.Positron", group = "CartoDB Positron") %>%
+  addProviderTiles("OpenStreetMap.Mapnik", group = "OpenStreetMap") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Esri World Imagery") %>%
+  addPolygons(
+    fillColor = ~palpal(quadrant),
+    fillOpacity = 0.7,
+    color = "#444",
+    weight = 1,
+    popup = ~paste0(
+      "<strong>County: </strong>", NAME, "<br>",
+      "<strong>Quadrant: </strong>", quadrant, "<br>",
+      "<strong>p-value: </strong>", round(P.Ii, 4)
+    )
+  ) %>%
+  addLegend(
+    "bottomright",
+    pal = palpal,
+    values = ~quadrant,
+    title = "LISA Quadrants",
+    opacity = 0.7
+  ) %>%
+  addLayersControl(
+    baseGroups = c("CartoDB Positron", "OpenStreetMap", "Esri World Imagery"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+
+moranmap
+
+```
+
+#Task 3: lab 4 map
+Using species distribution model from final project, eliminating tree variable to make everything run a little smoother.
+##Setup
+```{r}
+#COUNTY DATA
+oh_counties <- "./data/ohio/oh_counties.gpkg"
+county <- sf::read_sf(oh_counties) %>%
+  dplyr::filter(., NAME %in% c("Cuyahoga", "Summit", "Lorain", "Medina", "Lake", "Geauga", "Portage")) %>% st_transform(., crs = 4326)
+
+#Park Data
+parks <- "./data/ohio/oh_parks.gpkg"
+park <- sf::read_sf(parks) %>% st_transform(., crs = 4326) %>% st_intersection(., county)
+```
+
+```{r}
+#iNaturalist Request
+bounds <- c(40.906502,-82.348183,42.251602,-81.001695)
+morel <- get_inat_obs(taxon_name = "Morchella", bounds = bounds, maxresults = 10000)
+inat_map(morel)
+```
+
+```{r}
+#bioclim raster
+biobounds <- c(-82.348183,40.906502,-81.001695, 42.251602)
+bio <- geodata::worldclim_global(var = "bio", res = 0.5, bounds = bounds, path = getwd())
+names(bio) <- paste0("bio", 1:19)
+crs(bio) <- "EPSG:4326"
+
+```
+
+```{r}
+geoextent <- ext(county)
+bioext <- crop(bio, geoextent)
+
+
+#climate variables of morel fruiting locations
+shroomcord <- morel %>% dplyr::mutate(scientific_name = 1) %>% dplyr::select(scientific_name, latitude, longitude)
+damorel <- st_as_sf(shroomcord, coords = c("longitude", "latitude"), crs = 4326)
+
+shroomclim <- terra::extract(bioext, damorel) %>% as.data.frame(.)
+```
+
+```{r}
+#Eliminate highly correlated variables to increase model accuracy
+v1 <- vifstep(shroomclim)
+non_collinear_vars <- exclude(bioext, v1)
+
+temp_files <- list()
+temp_files <-
+for (i in 1:nlyr(non_collinear_vars)) {
+  temp_file <- tempfile(fileext = ".tif")
+  writeRaster(non_collinear_vars[[i]], temp_file, overwrite = TRUE)
+  temp_files[[i]] <- temp_file
+}
+
+#stack of prediction variable rasters
+biostack <- c(non_collinear_vars,temp_files)
+
+```
+
+```{r}
+#Format to fit model
+damorelsp <- vect(damorel)
+d1 <- sdmData(scientific_name ~ ., train = damorelsp, predictors = biostack, bg = list(method = 'gRandom', n = 1000, remove = TRUE))
+```
+Actual model building function
+```{r}
+getmethod('rf', 'glm') 
+m1 <- suppressWarnings(sdm(scientific_name ~ ., data = d1, methods=c('glm','rf')))
+
+#Uses a linear model for highly correlated variable trends and a random forest model to account for stochastic elements
+```
+
+###Predictive Raster
+```{r}
+p1 <- predict(m1,newdata=biostack,filename='p1.img', overwrite=TRUE)
+plot(p1)
+
+
+#ensemble model
+species_name <- "Morchella"
+en1 <- sdm::ensemble(m1, biostack, filename = paste0(species_name, "_T1.tif"), setting = list(method = 'weighted', stat = 'tss', opt = 2), overwrite = TRUE)
+plot(en1)
+```
+##Final Map
+```{r}
+#Custom Morel Icon
+morelIcon <- makeIcon(
+    iconUrl = 'https://static.wixstatic.com/media/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png/v1/fill/w_491,h_1000,al_c,q_90,enc_auto/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png',
+    iconWidth = 15, iconHeight = 25)
+pall <- colorNumeric(palette = "Greens", domain = values(en1), na.color = "transparent")
+
+html_legend <- "<img src='https://static.wixstatic.com/media/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png/v1/fill/w_491,h_1000,al_c,q_90,enc_auto/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png'style='width:15px;height:25px;'>Recent_Morel_Sightings"
+
+recentshroom <- morel %>% slice_max(datetime, n = 100) #This is all the iNat observations from 2024/2025
+
+
+
+recentmap <- leaflet() %>%
+  setView(lng = -81.54, lat = 41.245, zoom = 9.3) %>%
+  addTiles() %>%
+  addPolygons(data = county, popup = ~NAME, fill = FALSE, color = "black", group = "Counties", label = ~paste0(NAME),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "bold"))) %>%
+  addPolygons(data = park, popup = ~NAME, label = ~FEATTYPE, color = "chocolate", weight = 1, group = "Parks") %>%
+   addRasterImage(en1,colors = pall, opacity = 0.8) %>% 
+  addLegend(pal = pall, values = values(en1), title = "Morel Probability", group = "Species Distribution Model") %>%
+  addMarkers(data = recentshroom, icon = morelIcon) %>%
+  addControl(html = html_legend, position = "bottomright") %>%
+  addLayersControl(overlayGroups = c("Parks","Counties","Species Distribution Model"), position = "bottomleft")
+
+
+recentmap
+```
+
+
+#
