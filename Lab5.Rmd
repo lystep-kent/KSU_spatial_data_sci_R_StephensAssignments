@@ -197,7 +197,7 @@ inat_map(morel)
 ```
 
 ```{r}
-#bioclim raster
+#bioclim raster *WILL TAKE LONG TIME TO RUN*
 biobounds <- c(-82.348183,40.906502,-81.001695, 42.251602)
 bio <- geodata::worldclim_global(var = "bio", res = 0.5, bounds = bounds, path = getwd())
 names(bio) <- paste0("bio", 1:19)
@@ -291,4 +291,6 @@ recentmap
 ```
 
 
-#
+#Quesions
+1) Throughout this class, I believe I learned the most from in class exercises. Labs tended to be more frustrating because there wasn't a built-in sounding board to help (which I do understand is a personal issue). Lab exercises were particulary helpful for syntax, as that is generally my most reccuring issue. The labs all built nicely on one another, where I was able to build up a library of resources and functions to pull from. I will say, the static mapping lab was not helpful, and I much preferred the landsccape and zonal statistics we did at the end of the semester. Each of the other labs I thought meshed well together and provided me with a useful skill that could be applied broadly in other R projects. The species distribution model I made for my final project was really interesting and I pulled from every lab this semester to complete it. So, besides Lab 4, I think the class is structured very well and accomplishes its learning goals effectively. 
+2) I chose to add recent morel sightings (2024 and 2025 so far) with custom mushroom markers. I think adding recent sightings adds some validity to the high probability locations due to their overlap. Also, if someone was using the model to pick a foraging location, they can easily see recent hotspots. Note: I did figure out how to increase the resolution, but it takes a while to run so I am sorry about that.
