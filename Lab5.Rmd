@@ -83,7 +83,7 @@ bmpmap
 ##Setup
 
 ```{r}
-states <- sf::read_sf("./data/labstates.shp")
+states <- sf::read_sf("./data/labstate.shp")
 
 ```
 Choose a variable and normalize if necessary
