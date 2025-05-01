@@ -132,8 +132,7 @@ state.projected <- state.projected %>%
     Ii > 0 & state.projected$under5 < mean(state.projected$under5) ~ "Low-Low",
     Ii < 0 & state.projected$under5 > mean(state.projected$under5) ~ "High-Low",
     Ii < 0 & state.projected$under5 < mean(state.projected$under5) ~ "Low-High",
-    TRUE ~ "Non-Significant"
-  ))
+    TRUE ~ "Non-Significant" ))
 
 ```
 
@@ -156,20 +155,16 @@ moranmap <- leaflet(state.projected) %>%
     popup = ~paste0(
       "<strong>County: </strong>", NAME, "<br>",
       "<strong>Quadrant: </strong>", quadrant, "<br>",
-      "<strong>p-value: </strong>", round(P.Ii, 4)
-    )
-  ) %>%
+      "<strong>p-value: </strong>", round(P.Ii, 4))) %>%
   addLegend(
-    "bottomright",
+   "bottomright",
     pal = palpal,
     values = ~quadrant,
     title = "LISA Quadrants",
-    opacity = 0.7
-  ) %>%
+    opacity = 0.7) %>%
   addLayersControl(
     baseGroups = c("CartoDB Positron", "OpenStreetMap", "Esri World Imagery"),
-    options = layersControlOptions(collapsed = FALSE)
-  )
+    options = layersControlOptions(collapsed = FALSE))
 
 moranmap
 
