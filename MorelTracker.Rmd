@@ -8,6 +8,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+*FIA tree distribution data download required (Too large to upload to GitHub)*
+  -Go to https://research.fs.usda.gov/products/dataandtools/fia-datamart
+  -Filter for Ohio and zip file format
+  -Download OHIO OH.zip
+  -Place extracted folder into 'data' folder in directory
+
 
 #Set-Up
 ##Necessary Packages
