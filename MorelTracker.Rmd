@@ -1,0 +1,205 @@
+---
+title: "MorelTracker"
+author: "Lydia Stephens"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Set-Up
+##Necessary Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(rinat) #sourcing iNaturalist Data
+library(leaflet)
+library(sp)
+library(rFIA) #sourcing Forest Inventory and Analysis Data
+library(sdm) #Species Distribution Modelling
+library(usdm) #Collinearity analysis 
+library(geodata) #Sourcing abiotic predictor data
+library(terra)
+```
+##Data Sourcing
+```{r}
+#list of host tree species of Morchella using USFS species codes
+spp <-  c("731","742","971", "972", "973", "975", "977", "541", "543", "544", "546")
+#USFS TREE DATA
+dat <- readFIA(dir = "./data/OH_CSV")
+treedat <- dat$TREE
+plotdat <- dat$PLOT
+trees_filtered <- treedat %>% filter(SPCD %in% spp)
+treeplot <- trees_filtered %>%
+  left_join(plotdat[, c("PLOT", "LAT", "LON")], by = "PLOT") %>% 
+  filter(!is.na("LAT") & !is.na("LON"))
+treespp <- read.csv("./data/REF_SPECIES.csv")
+treesf <- st_as_sf(treeplot, coords = c("LON", "LAT"), crs = 4326)
+trees <- treesf %>% 
+  left_join(treespp, by = "SPCD") %>% dplyr::select(., c(COMMON_NAME, geometry))
+
+```
+    
+```{r}
+#COUNTY DATA
+oh_counties <- "./data/oh_counties.gpkg"
+county <- sf::read_sf(oh_counties) %>%
+  dplyr::filter(., NAME %in% c("Cuyahoga", "Summit", "Lorain", "Medina", "Lake", "Geauga", "Portage")) %>% st_transform(., crs = 4326)
+
+#Park Data
+parks <- "./data/oh_parks.gpkg"
+park <- sf::read_sf(parks) %>% st_transform(., crs = 4326) %>% st_intersection(., county)
+```
+
+```{r}
+#iNaturalist Request
+bounds <- c(40.906502,-82.348183,42.251602,-81.001695)
+morel <- get_inat_obs(taxon_name = "Morchella", bounds = bounds, maxresults = 10000)
+inat_map(morel)
+```
+
+```{r}
+#bioclim raster
+bio <- geodata::worldclim_global(var = "bio", res = 0.5, path = getwd())
+names(bio) <- paste0("bio", 1:19)
+crs(bio) <- "EPSG:4326"
+
+```
+*Note for raster variables*
+Annual Mean Temperature (bio1)
+Mean Diurnal Range (Mean of monthly (max temp - min temp); bio2)
+Isothermality (bio3), 
+Temperature Seasonality (standard deviation ×100; bio4)
+Max Temperature of Warmest Month (bio5)
+Min Temperature of Coldest Month (bio6)
+Temperature Annual Range (bio7)
+Mean Temperature of Wettest Quarter (bio8)
+Mean Temperature of Driest Quarter (bio9)
+Mean Temperature of Warmest Quarter (bio10)
+Mean Temperature of Coldest Quarter (bio11)
+Annual Precipitation (bio12)
+Precipitation of Wettest Month (bio13)
+Precipitation of Driest Month (bio14)
+Precipitation Seasonality (Coefficient of Variation; bio13)
+Precipitation of Wettest Quarter (bio16)
+Precipitation of Driest Quarter (bio17)
+Precipitation of Warmest Quarter (bio18)
+Precipitation of Coldest Quarter (bio19)
+
+#Model Creation
+
+##Set Up/Data Cleaning
+```{r}
+geoextent <- ext(county)
+bioext <- crop(bio, geoextent)
+#mapview(bioext) 
+
+#climate variables of morel fruiting locations
+shroomcord <- morel %>% dplyr::mutate(scientific_name = 1) %>% dplyr::select(scientific_name, latitude, longitude)
+damorel <- st_as_sf(shroomcord, coords = c("longitude", "latitude"), crs = 4326)
+
+shroomclim <- terra::extract(bioext, damorel) %>% as.data.frame(.)
+```
+
+```{r}
+#Host tree distribution raster
+treeuse <- vect(trees)
+r <- rast(ncol=162, nrow=161, xmin=-82.35, xmax=-81, ymin=40.9083333333333, ymax=42.25)
+treerast <- rasterize(treeuse, r, background = 0)
+plot(treerast)
+```
+
+```{r}
+#Eliminate highly correlated variables to increase model accuracy
+v1 <- vifstep(shroomclim)
+non_collinear_vars <- exclude(bioext, v1)
+
+temp_files <- list()
+temp_files <-
+for (i in 1:nlyr(non_collinear_vars)) {
+  temp_file <- tempfile(fileext = ".tif")
+  writeRaster(non_collinear_vars[[i]], temp_file, overwrite = TRUE)
+  temp_files[[i]] <- temp_file
+}
+
+biostack <- c(treerast, non_collinear_vars,temp_files)
+
+```
+
+##Species Distribution Model
+```{r}
+#creating presence/absence data for NE Ohio morels
+damorelsp <- vect(damorel)
+d1 <- sdmData(scientific_name ~ ., train = damorelsp, predictors = biostack, bg = list(method = 'gRandom', n = 1000, remove = TRUE))
+```
+
+```{r}
+#Actual model building function
+getmethod('rf', 'glm') 
+m1 <- suppressWarnings(sdm(scientific_name ~ ., data = d1, methods=c('glm','rf')))
+
+```
+
+Model and variable importance
+```{r}
+#evaluation of model fit
+eval1 <- sdm::getEvaluation(m1)
+roc(m1)
+#important predictors
+getVarImp(m1)
+plot(getVarImp(m1, method = 'rf'))
+```
+
+#Final Map
+##Predictive Raster
+```{r}
+p1 <- predict(m1,newdata=biostack,filename='p1.img', overwrite=TRUE)
+plot(p1)
+
+
+#ensemble model
+species_name <- "Morchella"
+en1 <- sdm::ensemble(m1, biostack, filename = paste0(species_name, "_T1.tif"), setting = list(method = 'weighted', stat = 'tss', opt = 2), overwrite = TRUE)
+plot(en1)
+```
+##Likely Locations
+```{r}
+morelIcon <- makeIcon(
+    iconUrl = 'https://static.wixstatic.com/media/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png/v1/fill/w_491,h_1000,al_c,q_90,enc_auto/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png',
+    iconWidth = 10, iconHeight = 15)
+pall <- colorNumeric(palette = "Greens", domain = values(en1), na.color = "transparent")
+
+html_legend <- "<img src='https://static.wixstatic.com/media/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png/v1/fill/w_491,h_1000,al_c,q_90,enc_auto/e35022_d47c18b5045b44edab88e3e18c4464b8~mv2.png'style='width:15px;height:25px;'>Recent_Morel_Sightings"
+
+recentshroom <- morel %>% slice_max(datetime, n = 100)
+
+finmap <- leaflet() %>%
+  setView(lng = -81.54, lat = 41.245, zoom = 9.25) %>%
+  addTiles() %>%
+  addPolygons(data = county, group = "Counties", popup = ~NAME, label = ~NAME, fill = FALSE, color = "black") %>%
+  addPolygons(data = park, group = "Parks", popup = ~NAME, label = ~FEATTYPE, color = "chocolate", weight = 1,) %>%
+   addRasterImage(en1, group = "Species Distribution Model", colors = pall, opacity = 0.8) %>% 
+  addLegend(pal = pall, values = values(en1), title = "Morel Probability") %>%
+  addLayersControl(overlayGroups = c("Parks","Counties","Species Distribution Model"), position = "bottomleft")
+
+recentmap <- leaflet() %>%
+  setView(lng = -81.54, lat = 41.245, zoom = 9.3) %>%
+  addTiles() %>%
+  addPolygons(data = county, popup = ~NAME, fill = FALSE, color = "black", group = "Counties", label = ~paste0(NAME),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "bold"))) %>%
+  addPolygons(data = park, popup = ~NAME, label = ~FEATTYPE, color = "chocolate", weight = 1, group = "Parks") %>%
+   addRasterImage(en1,colors = pall, opacity = 0.8) %>% 
+  addLegend(pal = pall, values = values(en1), title = "Morel Probability", group = "Species Distribution Model") %>%
+  addMarkers(data = recentshroom, icon = morelIcon) %>%
+  addControl(html = html_legend, position = "bottomright") %>%
+  addLayersControl(overlayGroups = c("Parks","Counties","Species Distribution Model"), position = "bottomleft")
+
+
+recentmap
+
+finmap
+```
+
