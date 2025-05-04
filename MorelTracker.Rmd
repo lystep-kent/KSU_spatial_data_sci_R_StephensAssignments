@@ -24,7 +24,7 @@ library(geodata) #Sourcing abiotic predictor data
 library(terra)
 ```
 ##Data Sourcing
-```{r}
+#```{r}
 #list of host tree species of Morchella using USFS species codes
 spp <-  c("731","742","971", "972", "973", "975", "977", "541", "543", "544", "546")
 #USFS TREE DATA
@@ -40,7 +40,7 @@ treesf <- st_as_sf(treeplot, coords = c("LON", "LAT"), crs = 4326)
 trees <- treesf %>% 
   left_join(treespp, by = "SPCD") %>% dplyr::select(., c(COMMON_NAME, geometry))
 
-```
+#```
     
 ```{r}
 #COUNTY DATA
@@ -103,13 +103,13 @@ damorel <- st_as_sf(shroomcord, coords = c("longitude", "latitude"), crs = 4326)
 shroomclim <- terra::extract(bioext, damorel) %>% as.data.frame(.)
 ```
 
-```{r}
+#```{r}
 #Host tree distribution raster
 treeuse <- vect(trees)
 r <- rast(ncol=162, nrow=161, xmin=-82.35, xmax=-81, ymin=40.9083333333333, ymax=42.25)
 treerast <- rasterize(treeuse, r, background = 0)
 plot(treerast)
-```
+#```
 
 ```{r}
 #Eliminate highly correlated variables to increase model accuracy
@@ -124,7 +124,7 @@ for (i in 1:nlyr(non_collinear_vars)) {
   temp_files[[i]] <- temp_file
 }
 
-biostack <- c(treerast, non_collinear_vars,temp_files)
+biostack <- c(non_collinear_vars,temp_files)
 
 ```
 
